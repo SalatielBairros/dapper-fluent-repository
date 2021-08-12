@@ -1,9 +1,9 @@
-﻿using Dapper.Fluent.Infra.Contracts;
-using Dapper.Fluent.Migrations.Extensions;
-using Dapper.Fluent.Migrations.Migrations;
+﻿using System.Linq;
+using Dapper.Fluent.ORM.Contracts;
+using Dapper.Fluent.ORM.Mapping;
 using FluentMigrator;
 
-namespace Dapper.Fluent.Infra.Migrations
+namespace Dapper.Fluent.ORM.Migrations
 {
     [Migration(1)]
     public class DapperFluentMigration : OnlyUpMigration
@@ -18,8 +18,11 @@ namespace Dapper.Fluent.Infra.Migrations
         public override void Up()
         {
             this.CreateSchemaIfNotExists(_configuration.Schema);
-            this.CreateTableIfNotExists<SampleEntity>(_configuration.Schema);
-            this.CreateTableIfNotExists<LogEntity>(_configuration.Schema);            
+
+            foreach (var map in FluentMap.FluentMapper.EntityMaps.Values.Cast<IDapperFluentEntityMap>())
+            {
+                this.CreateTableIfNotExists(map, _configuration.Schema);
+            }
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using FluentMigrator;
 
-namespace Dapper.Fluent.Migrations.Migrations
+namespace Dapper.Fluent.ORM.Migrations
 {
     public abstract class OnlyUpMigration : Migration
     {

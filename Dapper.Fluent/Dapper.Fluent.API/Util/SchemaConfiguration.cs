@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Dapper.Fluent.Infra.Contracts;
+using Dapper.Fluent.ORM.Contracts;
 
 namespace Dapper.Fluent.API.Util
 {

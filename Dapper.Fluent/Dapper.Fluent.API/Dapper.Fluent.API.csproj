@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
@@ -16,7 +16,7 @@
     <ProjectReference Include="..\Dapper.Fluent.Application\Dapper.Fluent.Application.csproj" />
     <ProjectReference Include="..\Dapper.Fluent.Domain\Dapper.Fluent.Domain.csproj" />
     <ProjectReference Include="..\Dapper.Fluent.Infra\Dapper.Fluent.Infra.csproj" />
-    <ProjectReference Include="..\Dapper.Fluent.Migrations\Dapper.Fluent.Migrations.csproj" />
+    <ProjectReference Include="..\Dapper.Fluent.Repository\Dapper.Fluent.Repository.csproj" />
   </ItemGroup>
 
 </Project>

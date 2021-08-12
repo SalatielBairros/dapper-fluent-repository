@@ -14,8 +14,4 @@
     <PackageReference Include="Npgsql" Version="5.0.7" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Dapper.Fluent.Repository\Dapper.Fluent.Repository.csproj" />
-  </ItemGroup>
-
 </Project>
