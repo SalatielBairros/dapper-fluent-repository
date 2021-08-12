@@ -1,45 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Dapper.Fluent.Infra.Contracts;
+using Dapper.Fluent.Migrations.Extensions;
+using Dapper.Fluent.Migrations.Migrations;
 using FluentMigrator;
 
 namespace Dapper.Fluent.Infra.Migrations
 {
     [Migration(1)]
-    public class DapperFluentMigration : Migration
+    public class DapperFluentMigration : OnlyUpMigration
     {
-        public override void Up()
+        private readonly ISchemaConfiguration _configuration;
+
+        public DapperFluentMigration(ISchemaConfiguration schemaConfiguration)
         {
-            Create.Table("fluent_dapper_entity")
-                .InSchema("public")
-                .WithColumn("id").AsInt32().NotNullable().Identity().PrimaryKey("pk_fluent_dapper_entity")
-                .WithColumn("intproperty").AsInt32().Nullable()
-                .WithColumn("textproperty").AsString().Nullable()
-                .WithColumn("limitedtextproperty").AsFixedLengthString(255).Nullable()
-                .WithColumn("booleanproperty").AsBoolean().Nullable()
-                .WithColumn("dateproperty").AsDateTime().Nullable()
-                .WithColumn("decimalproperty").AsDecimal().Nullable();
-
-            Create.Schema("dapper");            
-
-            Create.Table("logentity")
-                .InSchema("dapper")
-                .WithColumn("id").AsInt32().NotNullable().Identity().PrimaryKey("pk_fluent_dapper_entity")
-                .WithColumn("publicid").AsInt32().NotNullable()
-                .WithColumn("intproperty").AsInt32().Nullable()
-                .WithColumn("textproperty").AsString().Nullable()
-                .WithColumn("limitedtextproperty").AsFixedLengthString(255).Nullable()
-                .WithColumn("booleanproperty").AsBoolean().Nullable()
-                .WithColumn("dateproperty").AsDateTime().Nullable()
-                .WithColumn("decimalproperty").AsDecimal().Nullable();
+            _configuration = schemaConfiguration;
         }
 
-        public override void Down()
+        public override void Up()
         {
-            Delete.Table("fluent_dapper_entity");
-            Delete.Table("dapper");
+            this.CreateSchemaIfNotExists(_configuration.Schema);
+            this.CreateTableIfNotExists<SampleEntity>(_configuration.Schema);
+            this.CreateTableIfNotExists<LogEntity>(_configuration.Schema);            
         }
     }
 }

@@ -6,11 +6,12 @@
 
   <ItemGroup>
     <PackageReference Include="FluentMigrator" Version="3.2.17" />
-    <PackageReference Include="Npgsql" Version="5.0.7" />    
+    <PackageReference Include="FluentMigrator.Runner" Version="3.2.17" />
+    <PackageReference Include="FluentMigrator.Runner.Postgres" Version="3.2.17" />
+    <PackageReference Include="Npgsql" Version="5.0.7" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Dapper.Fluent.Migrations\Dapper.Fluent.Migrations.csproj" />
     <ProjectReference Include="..\Dapper.Fluent.Repository\Dapper.Fluent.Repository.csproj" />
   </ItemGroup>
 
