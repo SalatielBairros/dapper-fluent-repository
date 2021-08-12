@@ -8,8 +8,7 @@ namespace Dapper.Fluent.Infra.FluentMapper
     {
         public LogEntityMap()
         {
-            ToTable("log");
-            ToSchema("dapper");
+            ToTable("log", "dapper");            
             MapToColumn(x => x.Id).IsKey().IsIdentity();
             MapToColumn(x => x.IntProperty);
             MapToColumn(x => x.LimitedTextProperty);

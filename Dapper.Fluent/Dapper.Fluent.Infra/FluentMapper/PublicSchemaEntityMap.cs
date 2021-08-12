@@ -8,8 +8,7 @@ namespace Dapper.Fluent.Infra.FluentMapper
     {
         public PublicSchemaEntityMap()
         {
-            ToTable("sampleentity");
-            ToSchema("dapper");
+            ToTable("sampleentity", "dapper");
             MapToColumn(x => x.Id).IsKey().IsIdentity();
             MapToColumn(x => x.IntProperty);
             MapToColumn(x => x.LimitedTextProperty);

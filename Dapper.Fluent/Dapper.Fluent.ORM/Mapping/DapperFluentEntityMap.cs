@@ -8,13 +8,6 @@ namespace Dapper.Fluent.ORM.Mapping
 {
     public abstract class DapperFluentEntityMap<TEntity> : DommelEntityMap<TEntity>, IDapperFluentEntityMap where TEntity : class
     {
-        public string Schema { get; private set; }
-
-        public void ToSchema(string schema)
-        {
-            Schema = schema;
-        }
-
         protected DommelPropertyMap MapToColumn(Expression<Func<TEntity, object>> expression)
         {
             var property = base.Map(expression);

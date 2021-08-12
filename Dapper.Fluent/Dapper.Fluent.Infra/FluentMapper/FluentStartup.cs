@@ -8,7 +8,7 @@ namespace Dapper.Fluent.Infra.FluentMapper
         public static IServiceCollection AddMappers(this IServiceCollection services)
         {
             FluentMap.FluentMapper.Initialize(config =>
-            {
+            {                
                 config.AddMap(new LogEntityMap());
                 config.AddMap(new PublicSchemaEntityMap());
                 config.ForDommel();
