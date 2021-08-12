@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Dapper.Fluent.Application;
 using Dapper.Fluent.Domain.Contracts;
+using Dapper.Fluent.Infra.Migrations;
+using FluentMigrator.Runner;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -28,6 +30,13 @@ namespace Dapper.Fluent.API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddFluentMigratorCore()
+                .ConfigureRunner(cfg => cfg
+                    .AddPostgres()
+                    .WithGlobalConnectionString(Configuration["ConnectionString"])
+                    .ScanIn(typeof(DapperFluentMigration).Assembly).For.Migrations()
+                )
+                .AddLogging(cfg => cfg.AddFluentMigratorConsole());
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -38,8 +47,10 @@ namespace Dapper.Fluent.API
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IMigrationRunner migrationRunner)
         {
+            migrationRunner.MigrateUp();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

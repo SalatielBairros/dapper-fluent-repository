@@ -22,7 +22,7 @@ namespace Dapper.Fluent.Infra.Migrations
                 .WithColumn("dateproperty").AsDateTime().Nullable()
                 .WithColumn("decimalproperty").AsDecimal().Nullable();
 
-            Create.Schema("dapper");
+            Create.Schema("dapper");            
 
             Create.Table("logentity")
                 .InSchema("dapper")

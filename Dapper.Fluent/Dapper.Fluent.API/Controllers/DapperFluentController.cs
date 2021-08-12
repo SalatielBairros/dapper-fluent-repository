@@ -35,7 +35,7 @@ namespace Dapper.Fluent.API.Controllers
         [HttpPatch("{id}")]
         public PublicSchemaEntity Path(int id, [FromBody] PublicSchemaEntity entity) => _service.Update(id, entity);
 
-        [HttpPatch("{id}")]
+        [HttpPut("{id}")]
         public PublicSchemaEntity Put(int id, [FromBody] PublicSchemaEntity entity) => _service.Update(id, entity);
 
         [HttpDelete("{id}")]
