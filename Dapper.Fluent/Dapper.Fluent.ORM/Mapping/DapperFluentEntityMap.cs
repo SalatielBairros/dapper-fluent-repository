@@ -8,16 +8,11 @@ namespace Dapper.Fluent.ORM.Mapping
 {
     public abstract class DapperFluentEntityMap<TEntity> : DommelEntityMap<TEntity>, IDapperFluentEntityMap where TEntity : class
     {
-        public bool PublicSchema { get; private set; } = false;
+        public string Schema { get; private set; }
 
-        public void IsPublicSchema()
+        public void ToSchema(string schema)
         {
-            PublicSchema = true;
-        }
-
-        public void IsPrivateSchema()
-        {
-            PublicSchema = false;
+            Schema = schema;
         }
 
         protected DommelPropertyMap MapToColumn(Expression<Func<TEntity, object>> expression)

@@ -9,7 +9,7 @@ namespace Dapper.Fluent.Infra.FluentMapper
         public LogEntityMap()
         {
             ToTable("log");
-            IsPrivateSchema();
+            ToSchema("dapper");
             MapToColumn(x => x.Id).IsKey().IsIdentity();
             MapToColumn(x => x.IntProperty);
             MapToColumn(x => x.LimitedTextProperty);

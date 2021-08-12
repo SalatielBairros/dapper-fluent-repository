@@ -6,18 +6,18 @@ namespace Dapper.Fluent.ORM.Extensions
 {
     public static class StartupExtensions
     {
-        public static IServiceCollection AddMigrator(this IServiceCollection services, string connectionString)
+        public static IServiceCollection AddMigrator(this IServiceCollection services)
         {
-            services
+            return services
                 .AddFluentMigratorCore()
-                .ConfigureRunner(cfg => cfg
-                    .AddPostgres()
-                    .WithGlobalConnectionString(connectionString)
-                    .ScanIn(typeof(DapperFluentMigration).Assembly).For.Migrations()
-                )
                 .AddLogging(cfg => cfg.AddFluentMigratorConsole());
+        }
 
-            return services;
+        public static IMigrationRunnerBuilder ConfigureMigrator(this IMigrationRunnerBuilder @this, string connectionString)
+        {
+            return @this
+                .WithGlobalConnectionString(connectionString)
+                .ScanIn(typeof(DapperFluentMigration).Assembly).For.Migrations();
         }
     }
 }

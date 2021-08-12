@@ -21,6 +21,7 @@ using Dapper.Fluent.Repository.Contracts;
 using Dapper.Fluent.Repository.Impl;
 using Dapper.Fluent.ORM.Extensions;
 using Dapper.Fluent.ORM.Contracts;
+using Dapper.Fluent.ORM.Postgres.Extensions;
 
 namespace Dapper.Fluent.API
 {
@@ -37,7 +38,7 @@ namespace Dapper.Fluent.API
         public void ConfigureServices(IServiceCollection services)
         {
             services
-                .AddMigrator(Configuration["ConnectionString"])
+                .AddPostgresMigrator(Configuration["ConnectionString"])
                 .AddMappers();
 
             services.AddControllers();
@@ -46,7 +47,7 @@ namespace Dapper.Fluent.API
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Dapper.Fluent.API", Version = "v1" });
             });
             services.AddScoped<IDapperFluentService, DapperFluentService>();
-            services.AddTransient<ISchemaConfiguration, SchemaConfiguration>();            
+            services.AddTransient<IRepositorySettings, RepositorySettings>();            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
