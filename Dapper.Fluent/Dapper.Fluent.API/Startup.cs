@@ -33,7 +33,6 @@ namespace Dapper.Fluent.API
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services
@@ -46,8 +45,11 @@ namespace Dapper.Fluent.API
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Dapper.Fluent.API", Version = "v1" });
             });
-            services.AddScoped<IDapperFluentService, DapperFluentService>();      
+
             services.AddScoped<IRequestInfo, RequestInfo>();
+            services.AddScoped<IDapperFluentService, DapperFluentService>();
+            services.AddScoped<IPublicSchemaEntityRepository, PublicSchemaEntityRepository>();
+            services.AddScoped<ILogRepository, LogRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
