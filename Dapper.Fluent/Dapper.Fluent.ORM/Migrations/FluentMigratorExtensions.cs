@@ -60,18 +60,32 @@ namespace Dapper.Fluent.ORM.Migrations
             }
 
         }
-      
-        private static ICreateTableColumnOptionOrWithColumnSyntax As(this ICreateTableColumnAsTypeSyntax column, Type type) => mappedTypes[type](column);
+
+        private static ICreateTableColumnOptionOrWithColumnSyntax As(this ICreateTableColumnAsTypeSyntax @this, DapperFluentPropertyMap column)
+        {
+            var type = column.PropertyInfo.PropertyType;
+            if (column.HasLenght() && type == typeof(string))
+            {
+                return @this.AsFixedLengthString(column.Lenght);
+            }
+            return mappedTypes[column.PropertyInfo.PropertyType](@this);
+        }
 
         private static ICreateTableWithColumnSyntax AddColumns(this ICreateTableWithColumnSyntax table, IList<IPropertyMap> columns)
         {
-            foreach (var column in columns.Cast<DommelPropertyMap>())
+            foreach (var column in columns.Cast<DapperFluentPropertyMap>())
             {
-                var c = table.WithColumn(column.ColumnName).As(column.PropertyInfo.PropertyType);
+                var c = table.WithColumn(column.ColumnName).As(column);
                 if (column.Identity)
                     c.Identity();
                 if (column.Key)
                     c.PrimaryKey();
+                if (column.HasDefaultValue())
+                    c.WithDefaultValue(column.DefaultValue);
+                if (column.AllowNull)
+                    c.Nullable();
+                else
+                    c.NotNullable();
             }
             return table;
         }

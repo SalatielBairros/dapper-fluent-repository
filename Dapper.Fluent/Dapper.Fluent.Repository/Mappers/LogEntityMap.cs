@@ -9,10 +9,10 @@ namespace Dapper.Fluent.Repository.FluentMapper
         public LogEntityMap(string schema)
             : base(schema)
         {
-            ToTable("log", schema);            
+            ToTable("log", schema);
             MapToColumn(x => x.Id).IsKey().IsIdentity();
-            MapToColumn(x => x.IntProperty);
-            MapToColumn(x => x.LimitedTextProperty);
+            MapToColumn(x => x.IntProperty).Default(5).NotNull();
+            MapToColumn(x => x.LimitedTextProperty).WithLenght(255);
             MapToColumn(x => x.PublicId);
             MapToColumn(x => x.TextProperty);
             Map(x => x.DateProperty).ToColumn("date", false);

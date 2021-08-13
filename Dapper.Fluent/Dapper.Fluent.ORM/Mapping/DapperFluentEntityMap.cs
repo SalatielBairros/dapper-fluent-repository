@@ -12,13 +12,20 @@ namespace Dapper.Fluent.ORM.Mapping
 
         public DapperFluentEntityMap(string schema)
         {
-            Schema = schema;
+            Schema = schema;            
         }
 
-        protected DommelPropertyMap MapToColumn(Expression<Func<TEntity, object>> expression)
+        protected override DapperFluentPropertyMap GetPropertyMap(PropertyInfo info) => new DapperFluentPropertyMap(info);
+
+        protected DapperFluentPropertyMap MapToColumn(Expression<Func<TEntity, object>> expression)
         {
             var property = base.Map(expression);
-            return property.ToColumn(property.ColumnName.ToLowerInvariant(), false);
+            return (DapperFluentPropertyMap)property.ToColumn(property.ColumnName.ToLowerInvariant(), false);
+        }
+
+        protected new DapperFluentPropertyMap Map(Expression<Func<TEntity, object>> expression)
+        {
+            return (DapperFluentPropertyMap)base.Map(expression);
         }
     }
 }

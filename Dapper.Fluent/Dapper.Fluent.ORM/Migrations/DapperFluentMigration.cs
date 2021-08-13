@@ -12,7 +12,7 @@ namespace Dapper.Fluent.ORM.Migrations
         {
             FluentMap.FluentMapper.EntityMaps.Values.Cast<IDapperFluentEntityMap>()
                 .ToList()
-                .ForEach(map => this.CreateTableIfNotExists(map));
+                .ForEach(map => this.CreateTableIfNotExists(map));            
         }
     }
 }
