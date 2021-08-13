@@ -5,6 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dapper.Fluent.Domain;
+using Dapper.Fluent.ORM.Postgres;
+using Dapper.Fluent.ORM.Postgres.Contracts;
+using Dapper.Fluent.ORM.Repository;
 using Dapper.Fluent.Repository.Contracts;
 using Dommel;
 
@@ -12,21 +15,14 @@ namespace Dapper.Fluent.Repository.Impl
 {
     public class PublicSchemaEntityRepository : IPublicSchemaEntityRepository
     {
-        private readonly IDbConnection _connection;
+        private readonly IPostgresRepository<PublicSchemaEntity> _repository;
 
-        public PublicSchemaEntityRepository(IDbConnection connection)
+        public PublicSchemaEntityRepository(IPostgresRepository<PublicSchemaEntity> repository)
         {
-            _connection = connection;
+            this._repository = repository;
         }
 
-        public int Insert(PublicSchemaEntity entity)
-        {
-            return (int)_connection.Insert(entity);
-        }
-
-        public IEnumerable<PublicSchemaEntity> GetAll()
-        {
-            return _connection.GetAll<PublicSchemaEntity>();
-        }
+        public IEnumerable<PublicSchemaEntity> GetAll() => _repository.All();
+        public int Insert(PublicSchemaEntity entity) => _repository.Add(entity);
     }
 }

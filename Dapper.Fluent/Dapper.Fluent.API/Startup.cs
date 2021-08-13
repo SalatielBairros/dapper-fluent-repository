@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Dapper.Fluent.API.Util;
 using Dapper.Fluent.Application;
 using Dapper.Fluent.Domain.Contracts;
-using Dapper.Fluent.Infra.FluentMapper;
 using FluentMigrator.Runner;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -38,22 +37,23 @@ namespace Dapper.Fluent.API
         public void ConfigureServices(IServiceCollection services)
         {
             services
-                .AddPostgresMigrator(Configuration["ConnectionString"])
-                .AddMappers();
+                .AddPostgresRepositoryWithMigration(Configuration["ConnectionString"])
+                .AddMapperConfiguration<MapperConfiguration>()
+                .AddDapperORM();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Dapper.Fluent.API", Version = "v1" });
             });
-            services.AddScoped<IDapperFluentService, DapperFluentService>();
-            services.AddTransient<IRepositorySettings, RepositorySettings>();            
+            services.AddScoped<IDapperFluentService, DapperFluentService>();      
+            services.AddScoped<IRequestInfo, RequestInfo>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IMigrationRunner migrationRunner)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IDapperORMRunner dapper)
         {
-            migrationRunner.MigrateUp();
+            dapper.AddMapsAndRunMigrations();
 
             if (env.IsDevelopment())
             {

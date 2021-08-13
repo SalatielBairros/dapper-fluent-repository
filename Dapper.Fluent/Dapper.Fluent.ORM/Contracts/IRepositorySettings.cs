@@ -5,5 +5,6 @@ namespace Dapper.Fluent.ORM.Contracts
     {
         string ConnString { get; }
         string Schema { get; }
+        string DefaultSchema { get; }
     }
 }

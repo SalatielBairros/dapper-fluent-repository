@@ -2,19 +2,19 @@
 using Dapper.Fluent.Domain;
 using Dapper.Fluent.ORM.Mapping;
 
-namespace Dapper.Fluent.Infra.FluentMapper
+namespace Dapper.Fluent.Repository.FluentMapper
 {
-    public class LogEntityMap : DapperFluentEntityMap<LogEntity>
+    public class PublicSchemaEntityMap : DapperFluentEntityMap<PublicSchemaEntity>
     {
-        public LogEntityMap()
+        public PublicSchemaEntityMap(string schema)
+            : base(schema)
         {
-            ToTable("log", "dapper");            
+            ToTable("sampleentity", schema);
             MapToColumn(x => x.Id).IsKey().IsIdentity();
             MapToColumn(x => x.IntProperty);
             MapToColumn(x => x.LimitedTextProperty);
-            MapToColumn(x => x.PublicId);
             MapToColumn(x => x.TextProperty);
-            Map(x => x.DateProperty).ToColumn("date", false);
+            Map(x => x.DateProperty).ToColumn("date");
             MapToColumn(x => x.DecimalProperty);
             MapToColumn(x => x.BooleanProperty);
         }

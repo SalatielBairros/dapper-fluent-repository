@@ -5,7 +5,7 @@ using Dapper.Fluent.ORM.Contracts;
 
 namespace Dapper.Fluent.ORM.Repository
 {
-    public class DapperConnection<TAdapter, TDialect> : IDapperConnection
+    public class DapperConnection<TAdapter> : IDapperConnection
             where TAdapter : IDbConnection, new()
     {
         public IRepositorySettings Settings { get; }

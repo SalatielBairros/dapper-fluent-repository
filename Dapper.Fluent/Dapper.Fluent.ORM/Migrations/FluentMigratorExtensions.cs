@@ -34,18 +34,6 @@ namespace Dapper.Fluent.ORM.Migrations
             [typeof(Enum)] = c => c.AsInt32(),
         };
 
-        public static IFluentSyntax CreateTableIfNotExists(this MigrationBase self, string schema, string tableName, Func<ICreateTableWithColumnSyntax, IFluentSyntax> creationFunc)
-        {
-            if (!self.Schema.Schema(schema).Table(tableName).Exists())
-            {
-                return creationFunc(self.Create.Table(tableName).InSchema(schema));
-            }
-            else
-            {
-                return null;
-            }
-        }
-
         public static IFluentSyntax CreateSchemaIfNotExists(this MigrationBase self, string schema)
         {
             if (!self.Schema.Schema(schema).Exists())
@@ -56,16 +44,15 @@ namespace Dapper.Fluent.ORM.Migrations
             {
                 return null;
             }
-        }        
+        }
 
-        public static ICreateTableColumnOptionOrWithColumnSyntax As(this ICreateTableColumnAsTypeSyntax column, Type type) => mappedTypes[type](column);
-
-        public static IFluentSyntax CreateTableIfNotExists(this MigrationBase @this, IDapperFluentEntityMap map, string schema)
-{
-            var tableName = map.TableName;
-            if (!@this.Schema.Schema(schema).Table(tableName).Exists())
-{
-                return @this.Create.Table(tableName).InSchema(schema).AddColumns(map.PropertyMaps);
+        public static IFluentSyntax CreateTableIfNotExists(this MigrationBase @this, IDapperFluentEntityMap map)
+        {
+            @this.CreateSchemaIfNotExists(map.Schema);
+            var tableName = GetTableName(map.TableName);
+            if (!@this.Schema.Schema(map.Schema).Table(tableName).Exists())
+            {
+                return @this.Create.Table(tableName).InSchema(map.Schema).AddColumns(map.PropertyMaps);
             }
             else
             {
@@ -73,6 +60,7 @@ namespace Dapper.Fluent.ORM.Migrations
             }
 
         }
+        private static ICreateTableColumnOptionOrWithColumnSyntax As(this ICreateTableColumnAsTypeSyntax column, Type type) => mappedTypes[type](column);
 
         private static ICreateTableWithColumnSyntax AddColumns(this ICreateTableWithColumnSyntax table, IList<IPropertyMap> columns)
         {
@@ -85,6 +73,15 @@ namespace Dapper.Fluent.ORM.Migrations
                     c.PrimaryKey();
             }
             return table;
+        }
+
+        private static string GetTableName(string fullTableName)
+        {
+            if (fullTableName.Contains('.'))
+            {
+                return fullTableName.Split('.')[1].ToLowerInvariant();
+            }
+            return fullTableName;
         }
     }
 }

@@ -8,14 +8,12 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.14" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
-    <PackageReference Include="FluentMigrator.Runner" Version="3.2.17" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />    
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Dapper.Fluent.Application\Dapper.Fluent.Application.csproj" />
     <ProjectReference Include="..\Dapper.Fluent.Domain\Dapper.Fluent.Domain.csproj" />
-    <ProjectReference Include="..\Dapper.Fluent.Infra\Dapper.Fluent.Infra.csproj" />
     <ProjectReference Include="..\Dapper.Fluent.ORM.Postgres\Dapper.Fluent.ORM.Postgres.csproj" />
     <ProjectReference Include="..\Dapper.Fluent.Repository\Dapper.Fluent.Repository.csproj" />
   </ItemGroup>
