@@ -7,6 +7,7 @@ namespace Dapper.Fluent.ORM.Contracts
 {
     public interface IDapperRepository<TEntity> where TEntity : class
     {
+        IDapperConnection Connection { get; }
         void Add(IEnumerable<TEntity> entities);
         int Add(TEntity entity);
         Task AddAsync(IEnumerable<TEntity> entities);

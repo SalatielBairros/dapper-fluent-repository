@@ -4,6 +4,22 @@ namespace Dapper.Fluent.Domain
 {
     public class LogEntity
     {
+        public LogEntity()
+        {
+
+        }
+
+        public LogEntity(PublicSchemaEntity entity)
+        {
+            PublicId = entity.Id;
+            IntProperty = entity.IntProperty;
+            TextProperty = entity.TextProperty;
+            LimitedTextProperty = entity.LimitedTextProperty;
+            BooleanProperty = entity.BooleanProperty;
+            DateProperty = DateTime.UtcNow;
+            DecimalProperty = entity.DecimalProperty;
+        }
+
         public int Id { get; set; }
         public int PublicId { get; set; }
         public int IntProperty { get; set; }

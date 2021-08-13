@@ -9,7 +9,7 @@ namespace Dapper.Fluent.ORM.Repository
 {
     public abstract class DapperRepository<TEntity> : IDapperRepository<TEntity> where TEntity : class
     {
-        protected IDapperConnection Connection { get; }
+        public IDapperConnection Connection { get; }
         public DapperRepository(IDapperConnection connection)
         {
             Connection = connection;
@@ -39,9 +39,9 @@ namespace Dapper.Fluent.ORM.Repository
 
         public Task AddAsync(IEnumerable<TEntity> entities) => Connection.Use(db => db.InsertAllAsync(entities));
 
-        public void Remove(Expression<Func<TEntity, bool>> filter) => Connection.Use(db => db.Delete(db.FirstOrDefault(filter)));
+        public void Remove(Expression<Func<TEntity, bool>> filter) => Connection.Use(db => db.DeleteMultiple(filter));
 
-        public Task RemoveAsync(Expression<Func<TEntity, bool>> filter) => Connection.Use(db => db.DeleteAsync(db.FirstOrDefault(filter)));
+        public Task RemoveAsync(Expression<Func<TEntity, bool>> filter) => Connection.Use(db => db.DeleteMultipleAsync(filter));
 
         public bool Update(TEntity entity) => Connection.Use(db => db.Update(entity));
 

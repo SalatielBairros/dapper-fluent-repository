@@ -60,6 +60,7 @@ namespace Dapper.Fluent.ORM.Migrations
             }
 
         }
+      
         private static ICreateTableColumnOptionOrWithColumnSyntax As(this ICreateTableColumnAsTypeSyntax column, Type type) => mappedTypes[type](column);
 
         private static ICreateTableWithColumnSyntax AddColumns(this ICreateTableWithColumnSyntax table, IList<IPropertyMap> columns)

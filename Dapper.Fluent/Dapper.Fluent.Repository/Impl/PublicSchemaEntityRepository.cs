@@ -22,7 +22,10 @@ namespace Dapper.Fluent.Repository.Impl
             this._repository = repository;
         }
 
+        public void Delete(int id) => _repository.Remove(x => x.Id == id);
+        public PublicSchemaEntity Get(int id) => _repository.Find(x => x.Id == id);
         public IEnumerable<PublicSchemaEntity> GetAll() => _repository.All();
         public int Insert(PublicSchemaEntity entity) => _repository.Add(entity);
+        public bool Update(PublicSchemaEntity entity) => _repository.Update(entity);
     }
 }
