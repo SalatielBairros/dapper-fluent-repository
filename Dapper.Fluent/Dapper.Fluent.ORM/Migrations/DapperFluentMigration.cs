@@ -16,14 +16,4 @@ namespace Dapper.Fluent.ORM.Migrations
             maps.ForEach(map => this.CreateTableIfNotExists(map));
         }
     }
-
-    [Migration(2)]
-    public class ForeignMigration : OnlyUpMigration
-    {
-        public override void Up()
-        {
-            FluentMap.FluentMapper.EntityMaps.Values.Cast<IDapperFluentEntityMap>().ToList()
-                .ForEach(this.CreateForeignKey);
-        }
-    }
 }

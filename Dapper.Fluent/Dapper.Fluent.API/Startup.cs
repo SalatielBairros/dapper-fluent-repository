@@ -52,7 +52,6 @@ namespace Dapper.Fluent.API
             services.AddScoped<ILogRepository, LogRepository>();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IDapperORMRunner dapper)
         {
             dapper.AddMapsAndRunMigrations();
