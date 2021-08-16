@@ -174,3 +174,9 @@ Todos os migrations criados são controlados pela tabela `VersionInfo` no schema
 
 <mark>Os números <strong>1</strong> e <strong>2</strong> são utilizados para o pacote para serem executados antes dos outros. Portanto todos os Migrations criados devem conter valores maiores que esses.</mark>
 
+## Melhorias futuras:
+
+* Atualizar versão do Dapper (o pacote do Fluent está com versão desatualizada e conflitando com a mais recente).
+* Join retornando lista
+* Join com Lambda
+
