@@ -19,6 +19,10 @@ namespace Dapper.Fluent.ORM.Repository
 
         public Task<IEnumerable<TEntity>> AllAsync() => Connection.Use(db => db.GetAllAsync<TEntity>());
 
+        public TEntity JoinWith<TJoin> (object id, Func<TEntity, TJoin, TEntity> map) => Connection.Use(db => db.Get(id, map));
+
+        public Task<TEntity> JoinWithAsync<TJoin>(object id, Func<TEntity, TJoin, TEntity> map) => Connection.Use(db => db.GetAsync(id, map));
+
         public IEnumerable<TEntity> GetData(string qry, object parameters) => Connection.Use(db => db.Query<TEntity>(qry, parameters));
 
         public Task<IEnumerable<TEntity>> GetDataAsync(string qry, object parameters) => Connection.Use(db => db.QueryAsync<TEntity>(qry, parameters));

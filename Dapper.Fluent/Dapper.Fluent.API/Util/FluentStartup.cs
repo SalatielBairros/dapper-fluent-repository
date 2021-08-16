@@ -17,8 +17,9 @@ namespace Dapper.Fluent.API.Util
 
         public void ConfigureMappers()
         {
-            FluentMapping.AddMap(new LogEntityMap(_info.Schema));
             FluentMapping.AddMap(new PublicSchemaEntityMap(_repository.DefaultSchema));
+            FluentMapping.AddMap(new CategoryMap(_repository.DefaultSchema));
+            FluentMapping.AddMap(new LogEntityMap(_info.Schema));
         }
     }
 }

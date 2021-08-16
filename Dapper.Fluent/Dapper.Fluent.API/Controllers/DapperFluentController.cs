@@ -26,6 +26,9 @@ namespace Dapper.Fluent.API.Controllers
         [HttpGet("{id}")]
         public PublicSchemaEntity Get(int id) => _service.Get(id);
 
+        [HttpGet("{id}/with-category")]
+        public PublicSchemaEntity GetWithCategory(int id) => _service.GetWithCategory(id);
+
         [HttpGet("{id}/logs")]
         public IEnumerable<LogEntity> GetLogs(int id) => _service.GetLogs(id);
 

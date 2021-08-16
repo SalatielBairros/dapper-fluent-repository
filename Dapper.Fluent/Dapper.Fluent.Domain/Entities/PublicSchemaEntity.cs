@@ -11,5 +11,7 @@ namespace Dapper.Fluent.Domain
         public bool BooleanProperty { get; set; }
         public DateTime DateProperty { get; set; }
         public decimal DecimalProperty { get; set; }
+        public int CategoryId { get; set; }        
+        public Category Category { get; set; }        
     }
 }

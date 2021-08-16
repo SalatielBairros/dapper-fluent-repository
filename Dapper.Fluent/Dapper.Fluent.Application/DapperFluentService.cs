@@ -24,6 +24,7 @@ namespace Dapper.Fluent.Application
         }
 
         public PublicSchemaEntity Get(int id) => _entityRepository.Get(id);
+        public PublicSchemaEntity GetWithCategory(int id) => _entityRepository.GetWithCategory(id);
         public IEnumerable<PublicSchemaEntity> GetAll() => _entityRepository.GetAll();
         public IEnumerable<LogEntity> GetLogs(int id) => _logRepository.GetAllByEntity(id);
         public PublicSchemaEntity Insert(PublicSchemaEntity entity)

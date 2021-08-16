@@ -18,6 +18,8 @@ namespace Dapper.Fluent.ORM.Contracts
         Task<TEntity> FindAsync(Expression<Func<TEntity, bool>> filter);
         IEnumerable<TEntity> GetData(Expression<Func<TEntity, bool>> filter);
         IEnumerable<TEntity> GetData(string qry, object parameters);
+        TEntity JoinWith<TJoin>(object id, Func<TEntity, TJoin, TEntity> map);
+        Task<TEntity> JoinWithAsync<TJoin>(object id, Func<TEntity, TJoin, TEntity> map);
         Task<IEnumerable<TEntity>> GetDataAsync(Expression<Func<TEntity, bool>> filter);
         Task<IEnumerable<TEntity>> GetDataAsync(string qry, object parameters);
         void Remove(Expression<Func<TEntity, bool>> filter);

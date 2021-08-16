@@ -14,5 +14,6 @@ namespace Dapper.Fluent.Repository.Contracts
         int Insert(PublicSchemaEntity entity);
         IEnumerable<PublicSchemaEntity> GetAll();
         PublicSchemaEntity Get(int id);
+        PublicSchemaEntity GetWithCategory(int id);
     }
 }

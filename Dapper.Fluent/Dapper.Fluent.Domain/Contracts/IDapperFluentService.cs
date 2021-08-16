@@ -9,6 +9,7 @@ namespace Dapper.Fluent.Domain.Contracts
     public interface IDapperFluentService
     {
         PublicSchemaEntity Get(int id);
+        PublicSchemaEntity GetWithCategory(int id);
         IEnumerable<PublicSchemaEntity> GetAll();
         IEnumerable<LogEntity> GetLogs(int id);
         PublicSchemaEntity Insert(PublicSchemaEntity entity);

@@ -10,9 +10,10 @@ namespace Dapper.Fluent.ORM.Migrations
     {
         public override void Up()
         {
-            FluentMap.FluentMapper.EntityMaps.Values.Cast<IDapperFluentEntityMap>()
-                .ToList()
-                .ForEach(map => this.CreateTableIfNotExists(map));            
+            var maps = FluentMap.FluentMapper.EntityMaps.Values.Cast<IDapperFluentEntityMap>().ToList();
+
+            maps.Select(x => x.Schema).Distinct().ToList().ForEach(schema => this.CreateSchemaIfNotExists(schema));
+            maps.ForEach(map => this.CreateTableIfNotExists(map));
         }
     }
 }

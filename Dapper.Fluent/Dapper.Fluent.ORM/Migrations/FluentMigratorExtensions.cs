@@ -47,8 +47,7 @@ namespace Dapper.Fluent.ORM.Migrations
         }
 
         public static IFluentSyntax CreateTableIfNotExists(this MigrationBase @this, IDapperFluentEntityMap map)
-        {
-            @this.CreateSchemaIfNotExists(map.Schema);
+        {            
             var tableName = GetTableName(map.TableName);
             if (!@this.Schema.Schema(map.Schema).Table(tableName).Exists())
             {

@@ -1,15 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Dapper.Fluent.Domain;
-using Dapper.Fluent.ORM.Postgres;
 using Dapper.Fluent.ORM.Postgres.Contracts;
-using Dapper.Fluent.ORM.Repository;
 using Dapper.Fluent.Repository.Contracts;
-using Dommel;
 
 namespace Dapper.Fluent.Repository.Impl
 {
@@ -27,5 +19,11 @@ namespace Dapper.Fluent.Repository.Impl
         public IEnumerable<PublicSchemaEntity> GetAll() => _repository.All();
         public int Insert(PublicSchemaEntity entity) => _repository.Add(entity);
         public bool Update(PublicSchemaEntity entity) => _repository.Update(entity);
+        public PublicSchemaEntity GetWithCategory(int id)
+            => _repository.JoinWith<Category>(id, (entity, category) =>
+            {
+                entity.Category = category;
+                return entity;
+            });
     }
 }
