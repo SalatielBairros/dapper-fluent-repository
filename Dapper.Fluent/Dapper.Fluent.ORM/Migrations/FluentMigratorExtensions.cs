@@ -7,6 +7,7 @@ using IFluentSyntax = FluentMigrator.Infrastructure.IFluentSyntax;
 using Dapper.FluentMap.Dommel.Mapping;
 using Dapper.FluentMap.Mapping;
 using Dapper.Fluent.ORM.Mapping;
+using static Dapper.SqlMapper;
 
 namespace Dapper.Fluent.ORM.Migrations
 {
@@ -47,7 +48,7 @@ namespace Dapper.Fluent.ORM.Migrations
         }
 
         public static IFluentSyntax CreateTableIfNotExists(this MigrationBase @this, IDapperFluentEntityMap map)
-        {            
+        {
             var tableName = GetTableName(map.TableName);
             if (!@this.Schema.Schema(map.Schema).Table(tableName).Exists())
             {
@@ -57,7 +58,22 @@ namespace Dapper.Fluent.ORM.Migrations
             {
                 return null;
             }
+        }
 
+        public static void CreateForeignKey(this MigrationBase @this, IDapperFluentEntityMap entity)
+        {
+            entity.PropertyMaps.Cast<DapperFluentPropertyMap>()
+                        .Where(p => p.IsForeignKey())
+                        .ToList()
+                        .ForEach(column =>
+                        {
+                            @this.Create
+                                .ForeignKey(column.ForeignKey.FKName)
+                                .FromTable(entity.TableName.GetTableName())
+                                .ForeignColumns(column.ColumnName)
+                                .ToTable(column.ForeignKey.PrimaryTable)
+                                .PrimaryColumn(column.ForeignKey.PrimaryColumn);
+                        });
         }
 
         private static ICreateTableColumnOptionOrWithColumnSyntax As(this ICreateTableColumnAsTypeSyntax @this, DapperFluentPropertyMap column)
@@ -89,7 +105,7 @@ namespace Dapper.Fluent.ORM.Migrations
             return table;
         }
 
-        private static string GetTableName(string fullTableName)
+        private static string GetTableName(this string fullTableName)
         {
             if (fullTableName.Contains('.'))
             {

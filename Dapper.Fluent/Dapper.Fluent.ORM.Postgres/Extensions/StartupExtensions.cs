@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Dapper.Fluent.ORM.Contracts;
@@ -14,7 +15,7 @@ namespace Dapper.Fluent.ORM.Postgres.Extensions
 {
     public static class StartupExtensions
     {
-        public static IServiceCollection AddPostgresRepositoryWithMigration(this IServiceCollection services, string connectionString, string defaultSchema = "public")
+        public static IServiceCollection AddPostgresRepositoryWithMigration(this IServiceCollection services, string connectionString, string defaultSchema = "public", params Assembly[] assembliesWithMappers)
         {
             services.AddScoped(typeof(IRepositorySettings), service => new PostgresRepositorySettings
             {
@@ -27,7 +28,7 @@ namespace Dapper.Fluent.ORM.Postgres.Extensions
             return services
                 .AddMigrator()
                 .ConfigureRunner(cfg => cfg
-                    .ConfigureMigrator(connectionString)
+                    .ConfigureMigrator(connectionString, assembliesWithMappers)
                     .AddPostgres()
                 );
         }
