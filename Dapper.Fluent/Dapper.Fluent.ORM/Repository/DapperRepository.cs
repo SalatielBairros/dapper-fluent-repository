@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Dapper.Fluent.ORM.Contracts;
@@ -19,7 +20,7 @@ namespace Dapper.Fluent.ORM.Repository
 
         public Task<IEnumerable<TEntity>> AllAsync() => Connection.Use(db => db.GetAllAsync<TEntity>());
 
-        public TEntity JoinWith<TJoin> (object id, Func<TEntity, TJoin, TEntity> map) => Connection.Use(db => db.Get(id, map));
+        public TEntity JoinWith<TJoin>(object id, Func<TEntity, TJoin, TEntity> map) => Connection.Use(db => db.Get(id, map));
 
         public Task<TEntity> JoinWithAsync<TJoin>(object id, Func<TEntity, TJoin, TEntity> map) => Connection.Use(db => db.GetAsync(id, map));
 
@@ -35,20 +36,45 @@ namespace Dapper.Fluent.ORM.Repository
 
         public Task<TEntity> FindAsync(Expression<Func<TEntity, bool>> filter) => Connection.Use(db => db.FirstOrDefaultAsync(filter));
 
-        public int Add(TEntity entity) => Connection.Use(db => (int)db.Insert(entity));
+        public int Add(TEntity entity)
+        {
+            EntityValidation.ThrowIfErrorOn(entity);
+            return Connection.Use(db => (int)db.Insert(entity));
+        }
 
-        public async Task<int> AddAsync(TEntity entity) => (int)await Connection.Use(db => db.InsertAsync(entity));
 
-        public void Add(IEnumerable<TEntity> entities) => Connection.Use(db => db.InsertAll(entities));
+        public async Task<int> AddAsync(TEntity entity)
+        {
+            EntityValidation.ThrowIfErrorOn(entity);
+            return (int)await Connection.Use(db => db.InsertAsync(entity));
+        }
 
-        public Task AddAsync(IEnumerable<TEntity> entities) => Connection.Use(db => db.InsertAllAsync(entities));
+        public void Add(IEnumerable<TEntity> entities)
+        {
+            entities.ToList().ForEach(EntityValidation.ThrowIfErrorOn);
+            Connection.Use(db => db.InsertAll(entities));
+        }
+
+        public Task AddAsync(IEnumerable<TEntity> entities)
+        {
+            entities.ToList().ForEach(EntityValidation.ThrowIfErrorOn);
+            return Connection.Use(db => db.InsertAllAsync(entities));
+        }
 
         public void Remove(Expression<Func<TEntity, bool>> filter) => Connection.Use(db => db.DeleteMultiple(filter));
 
         public Task RemoveAsync(Expression<Func<TEntity, bool>> filter) => Connection.Use(db => db.DeleteMultipleAsync(filter));
 
-        public bool Update(TEntity entity) => Connection.Use(db => db.Update(entity));
+        public bool Update(TEntity entity)
+        {
+            EntityValidation.ThrowIfErrorOn(entity);
+            return Connection.Use(db => db.Update(entity));
+        }
 
-        public Task<bool> UpdateAsync(TEntity entity, object pks) => Connection.Use(db => db.UpdateAsync(entity));
+        public Task<bool> UpdateAsync(TEntity entity, object pks)
+        {
+            EntityValidation.ThrowIfErrorOn(entity);
+            return Connection.Use(db => db.UpdateAsync(entity));
+        }
     }
 }

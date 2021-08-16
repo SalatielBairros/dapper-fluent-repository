@@ -9,10 +9,11 @@ namespace Dapper.Fluent.ORM.Mapping
     public abstract class DapperFluentEntityMap<TEntity> : DommelEntityMap<TEntity>, IDapperFluentEntityMap where TEntity : class
     {
         public string Schema { get; }
+        public bool IsValidated { get; private set; } = false;
 
         public DapperFluentEntityMap(string schema)
         {
-            Schema = schema;            
+            Schema = schema;          
         }
 
         protected override DapperFluentPropertyMap GetPropertyMap(PropertyInfo info) => new DapperFluentPropertyMap(info);
@@ -23,9 +24,12 @@ namespace Dapper.Fluent.ORM.Mapping
             return (DapperFluentPropertyMap)property.ToColumn(property.ColumnName.ToLowerInvariant(), false);
         }
 
-        protected new DapperFluentPropertyMap Map(Expression<Func<TEntity, object>> expression)
+        protected new DapperFluentPropertyMap Map(Expression<Func<TEntity, object>> expression) => (DapperFluentPropertyMap)base.Map(expression);
+
+        protected DapperFluentEntityMap<TEntity> WithEntityValidation()
         {
-            return (DapperFluentPropertyMap)base.Map(expression);
+            IsValidated = true;
+            return this;
         }
     }
 }

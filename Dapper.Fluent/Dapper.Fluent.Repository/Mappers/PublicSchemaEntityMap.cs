@@ -10,10 +10,11 @@ namespace Dapper.Fluent.Repository.FluentMapper
             : base(schema)
         {
             ToTable("sampleentity", schema);
+            WithEntityValidation();
             MapToColumn(x => x.Id).IsKey().IsIdentity();
             MapToColumn(x => x.IntProperty).Default(5).NotNull();
             MapToColumn(x => x.LimitedTextProperty).WithLenght(255);
-            MapToColumn(x => x.TextProperty);
+            MapToColumn(x => x.TextProperty).NotNull();
             Map(x => x.DateProperty).ToColumn("datepp");
             Map(x => x.DecimalProperty).ToColumn("decimalpp");
             MapToColumn(x => x.BooleanProperty);
