@@ -179,4 +179,6 @@ Todos os migrations criados são controlados pela tabela `VersionInfo` no schema
 * Atualizar versão do Dapper (o pacote do Fluent está com versão desatualizada e conflitando com a mais recente).
 * Join retornando lista
 * Join com Lambda
+* Testes unitários
+* Pacote nuget
 
