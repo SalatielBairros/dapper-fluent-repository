@@ -8,6 +8,7 @@ Pacote que permite o uso do Dapper como um ORM contendo as seguintes funcionalid
 * **Pesquisas com _lambda_**
 * **Geração automática das queries**: Utilizando o fluent já é compatível com vários bancos, como `Postgres`, `SQL Server`, `MySQL` e `SQLite`
 * **Gestão das conexões**: todas as conexões são abertas e fechadas para cada execução no repositório.
+* **Validação automática das entidades**: Permite que uma entidade seja validada automaticamente antes de ser enviada ao banco de acordo com as configurações do mapeamento.
 
 ## Dependências
 
