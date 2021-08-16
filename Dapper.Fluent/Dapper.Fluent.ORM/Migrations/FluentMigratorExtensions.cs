@@ -8,6 +8,7 @@ using Dapper.FluentMap.Dommel.Mapping;
 using Dapper.FluentMap.Mapping;
 using Dapper.Fluent.ORM.Mapping;
 using static Dapper.SqlMapper;
+using Dapper.Fluent.ORM.Extensions;
 
 namespace Dapper.Fluent.ORM.Migrations
 {
@@ -49,7 +50,7 @@ namespace Dapper.Fluent.ORM.Migrations
 
         public static IFluentSyntax CreateTableIfNotExists(this MigrationBase @this, IDapperFluentEntityMap map)
         {
-            var tableName = GetTableName(map.TableName);
+            var tableName = map.TableName.GetTableName();
             if (!@this.Schema.Schema(map.Schema).Table(tableName).Exists())
             {
                 return @this.Create.Table(tableName).InSchema(map.Schema).AddColumns(map.PropertyMaps);
@@ -103,15 +104,6 @@ namespace Dapper.Fluent.ORM.Migrations
                     c.NotNullable();
             }
             return table;
-        }
-
-        private static string GetTableName(this string fullTableName)
-        {
-            if (fullTableName.Contains('.'))
-            {
-                return fullTableName.Split('.')[1].ToLowerInvariant();
-            }
-            return fullTableName;
-        }
+        }        
     }
 }

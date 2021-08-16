@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
+using Dapper.Fluent.Mapping;
+using Dapper.Fluent.ORM.Extensions;
 using Dapper.FluentMap.Dommel.Mapping;
 
 namespace Dapper.Fluent.ORM.Mapping
@@ -33,10 +36,21 @@ namespace Dapper.Fluent.ORM.Mapping
             return this;
         }
 
-        public DapperFluentPropertyMap WithForeignKey(string primaryTable, string primaryColumn, string primarySchema)
+        public DapperFluentPropertyMap ForeignKeyFor(string primaryTable, string primaryColumn, string primarySchema)
         {
             var fkName = $"FK_{ColumnName}_{primaryColumn}_{primaryTable}";
             ForeignKey = new ForeignKeyMap(fkName, primaryTable, primaryColumn, primarySchema);
+            return this;
+        }
+
+        public DapperFluentPropertyMap ForeignKeyFor<T>(string primaryColumn) where T : class
+        {
+            var map = FluentMapping.GetMapOf<T>();
+            var column = map.PropertyMaps.Where(x => x.ColumnName == primaryColumn);
+            var primaryTable = map.TableName.GetTableName();
+
+            var fkName = $"FK_{ColumnName}_{primaryColumn}_{primaryTable}";
+            ForeignKey = new ForeignKeyMap(fkName, primaryTable, primaryColumn, map.Schema);
             return this;
         }
 

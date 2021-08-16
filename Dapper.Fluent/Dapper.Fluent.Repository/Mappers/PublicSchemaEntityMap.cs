@@ -17,7 +17,7 @@ namespace Dapper.Fluent.Repository.FluentMapper
             Map(x => x.DateProperty).ToColumn("datepp");
             Map(x => x.DecimalProperty).ToColumn("decimalpp");
             MapToColumn(x => x.BooleanProperty);
-            MapToColumn(x => x.CategoryId).WithForeignKey("category", "id", "public");
+            MapToColumn(x => x.CategoryId).ForeignKeyFor<Category>("id");
         }
     }
 }
