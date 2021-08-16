@@ -123,6 +123,8 @@ Após criar a configuração, basta injetar:
 services.AddMapperConfiguration<MapperConfiguration>();
 ```
 
+**As tabela serão criadas automaticamente a partir dos mapeamentos caso não existam na base, seguindo as regras do Migration.**
+
 ## Consumindo o repositório
 
 ```csharp
