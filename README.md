@@ -184,4 +184,5 @@ Todos os migrations criados são controlados pela tabela `VersionInfo` no schema
 * Join com Lambda
 * Testes unitários
 * Pacote nuget
+* Permitir GroupBy
 
