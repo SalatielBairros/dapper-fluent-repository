@@ -16,7 +16,7 @@ namespace Dapper.Fluent.ORM.Mapping
             Schema = schema;          
         }
 
-        protected override DapperFluentPropertyMap GetPropertyMap(PropertyInfo info) => new DapperFluentPropertyMap(info);
+        protected override DommelPropertyMap GetPropertyMap(PropertyInfo info) => new DapperFluentPropertyMap(info);
 
         protected DapperFluentPropertyMap MapToColumn(Expression<Func<TEntity, object>> expression)
         {
