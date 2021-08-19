@@ -62,7 +62,7 @@ namespace Dapper.Fluent.ORM.Migrations
         public static void CreateForeignKey(this MigrationBase @this, IDapperFluentEntityMap entity)
         {
             entity.PropertyMaps.Cast<DapperFluentPropertyMap>()
-                        .Where(p => p.IsForeignKey() && !@this.Schema.Table(entity.TableName).Constraint(p.ForeignKey.FKName).Exists())
+                        .Where(p => p.IsForeignKey() && !@this.Schema.Schema(entity.Schema).Table(entity.TableName.GetTableName()).Constraint(p.ForeignKey.FKName).Exists())
                         .ToList()
                         .ForEach(column =>
                         {
