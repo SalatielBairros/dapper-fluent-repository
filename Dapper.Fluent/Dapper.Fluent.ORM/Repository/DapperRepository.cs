@@ -5,14 +5,17 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Dapper.Fluent.ORM.Contracts;
 using Dommel;
+using FluentMigrator.Runner;
 
 namespace Dapper.Fluent.ORM.Repository
 {
     public abstract class DapperRepository<TEntity> : IDapperRepository<TEntity> where TEntity : class
     {
         public IDapperConnection Connection { get; }
-        public DapperRepository(IDapperConnection connection)
+
+        public DapperRepository(IDapperConnection connection, IDapperORMRunner runner)
         {
+            runner.CreateTablesFromMigrations();
             Connection = connection;
         }
 
@@ -25,6 +28,8 @@ namespace Dapper.Fluent.ORM.Repository
         public Task<TEntity> JoinWithAsync<TJoin>(object id, Func<TEntity, TJoin, TEntity> map) => Connection.Use(db => db.GetAsync(id, map));
 
         public IEnumerable<TEntity> GetData(string qry, object parameters) => Connection.Use(db => db.Query<TEntity>(qry, parameters));
+
+        public IEnumerable<TReturn> GetData<TReturn>(string qry, object parameters) => Connection.Use(db => db.Query<TReturn>(qry, parameters));
 
         public Task<IEnumerable<TEntity>> GetDataAsync(string qry, object parameters) => Connection.Use(db => db.QueryAsync<TEntity>(qry, parameters));
 
@@ -71,7 +76,7 @@ namespace Dapper.Fluent.ORM.Repository
             return Connection.Use(db => db.Update(entity));
         }
 
-        public Task<bool> UpdateAsync(TEntity entity, object pks)
+        public Task<bool> UpdateAsync(TEntity entity)
         {
             EntityValidation.ThrowIfErrorOn(entity);
             return Connection.Use(db => db.UpdateAsync(entity));

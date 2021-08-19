@@ -4,7 +4,7 @@ using FluentMigrator;
 
 namespace Dapper.Fluent.ORM.Migrations
 {
-    [Migration(2)]
+    [Migration(2, transactionBehavior: TransactionBehavior.None)]
     public class ForeignMigration : OnlyUpMigration
     {
         public override void Up()

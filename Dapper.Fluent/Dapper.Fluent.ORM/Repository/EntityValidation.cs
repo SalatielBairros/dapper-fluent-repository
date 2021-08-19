@@ -11,7 +11,7 @@ namespace Dapper.Fluent.ORM.Repository
         public static void ThrowIfErrorOn<T>(T entity) where T : class
         {
             var map = FluentMapping.GetMapOf<T>();
-            if (map.IsValidated)
+            if (map != null && map.IsValidated)
             {
                 map.PropertyMaps.Cast<DapperFluentPropertyMap>().ToList()
                     .ForEach(p =>

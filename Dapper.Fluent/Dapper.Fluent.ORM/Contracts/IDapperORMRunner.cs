@@ -3,6 +3,7 @@ namespace Dapper.Fluent.ORM.Contracts
 {
     public interface IDapperORMRunner
     {
-        void AddMapsAndRunMigrations();
+        void AddMappers();
+        void CreateTablesFromMigrations();
     }
 }

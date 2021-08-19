@@ -13,7 +13,7 @@ namespace Dapper.Fluent.ORM.Extensions
         public static IServiceCollection AddMigrator(this IServiceCollection services)
         {
             return services
-                .AddFluentMigratorCore()
+                .AddFluentMigratorCore()                
                 .AddLogging(cfg => cfg.AddFluentMigratorConsole());
         }
 
@@ -33,10 +33,8 @@ namespace Dapper.Fluent.ORM.Extensions
             return services.AddScoped<IMapperConfiguration, T>();
         }
 
-        public static IServiceCollection AddDapperORM(this IServiceCollection services)
-        {
-            return services.AddScoped<IDapperORMRunner, DapperRepositoryRunner>();
-        }
+        public static IServiceCollection AddDapperORM(this IServiceCollection services) 
+            => services.AddSingleton<IDapperORMRunner, DapperRepositoryRunner>();
 
     }
 }

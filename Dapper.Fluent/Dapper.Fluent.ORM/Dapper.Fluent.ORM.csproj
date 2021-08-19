@@ -12,4 +12,8 @@
     <PackageReference Include="Dapper.FluentMap.Dommel" Version="2.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Dapper.Fluent.ORM.MultiSchema\Dapper.Fluent.ORM.MultiSchema.csproj" />
+  </ItemGroup>
+
 </Project>

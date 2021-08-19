@@ -1,4 +1,5 @@
-﻿using Dapper.Fluent.ORM.Mapping;
+﻿using System.Linq;
+using Dapper.Fluent.ORM.Mapping;
 using Dapper.FluentMap;
 using Dapper.FluentMap.Mapping;
 using Dapper.FluentMap.TypeMaps;
@@ -19,6 +20,14 @@ namespace Dapper.Fluent.Mapping
         {
             FluentMap.FluentMapper.EntityMaps.TryGetValue(typeof(T), out var map);
             return (IDapperFluentEntityMap)map;
+        }
+
+        public static void SetDynamicSchema(string schema)
+        {
+            foreach (var map in FluentMap.FluentMapper.EntityMaps.Where(x => ((IDapperFluentEntityMap)x.Value).IsDynamicSchema))
+            {
+                ((IDapperFluentEntityMap)FluentMap.FluentMapper.EntityMaps[map.Key]).WithSchema(schema);
+            }
         }
     }
 }

@@ -1,11 +1,13 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Dapper.Fluent.ORM.Contracts;
 using Dapper.Fluent.ORM.Mapping;
 using FluentMigrator;
+using FluentMigrator.Runner.Versioning;
 
 namespace Dapper.Fluent.ORM.Migrations
 {
-    [Migration(1)]
+    [Migration(1, transactionBehavior: TransactionBehavior.None)]
     public class DapperFluentMigration : OnlyUpMigration
     {
         public override void Up()

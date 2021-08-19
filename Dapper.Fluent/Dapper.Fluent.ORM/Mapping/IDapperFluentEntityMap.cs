@@ -6,5 +6,7 @@ namespace Dapper.Fluent.ORM.Mapping
     {
         string Schema { get; }
         bool IsValidated { get; }
+        bool IsDynamicSchema { get; }
+        void WithSchema(string schema);
     }
 }

@@ -1,26 +1,18 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Dapper.Fluent.API.Util;
 using Dapper.Fluent.Application;
 using Dapper.Fluent.Domain.Contracts;
-using FluentMigrator.Runner;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using Dapper.Fluent.Domain;
 using Dapper.Fluent.Repository.Contracts;
 using Dapper.Fluent.Repository.Impl;
 using Dapper.Fluent.ORM.Extensions;
 using Dapper.Fluent.ORM.Contracts;
 using Dapper.Fluent.ORM.Postgres.Extensions;
+using Dapper.Fluent.Repository.Mappers;
+using Dapper.Fluent.ORM.MultiSchema;
 
 namespace Dapper.Fluent.API
 {
@@ -35,18 +27,20 @@ namespace Dapper.Fluent.API
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services
+            services.AddHttpContextAccessor();
+            
+            services                
                 .AddPostgresRepositoryWithMigration(Configuration["ConnectionString"])
                 .AddMapperConfiguration<MapperConfiguration>()
-                .AddDapperORM();
+                .AddDapperORM()
+                .AddDapperMultiSchemaOptions();            
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Dapper.Fluent.API", Version = "v1" });
             });
-
-            services.AddScoped<IRequestInfo, RequestInfo>();
+            
             services.AddScoped<IDapperFluentService, DapperFluentService>();
             services.AddScoped<IPublicSchemaEntityRepository, PublicSchemaEntityRepository>();
             services.AddScoped<ILogRepository, LogRepository>();
@@ -54,7 +48,7 @@ namespace Dapper.Fluent.API
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IDapperORMRunner dapper)
         {
-            dapper.AddMapsAndRunMigrations();
+            dapper.AddMappers();
 
             if (env.IsDevelopment())
             {

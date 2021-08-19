@@ -158,6 +158,21 @@ services.AddMapperConfiguration<MapperConfiguration>();
 ##### Observações
 * O método `JoinWith` atualmente retorna apenas um objeto por id. Isso se dá devido a limitação do [FluentMigrator](https://www.nuget.org/packages/FluentMigrator/). Com isso, só funciona em FKs simples e não retorna uma lista com eles. **No código do pacote do migrator já existe a função para tal, mas ela não está exposta. Um próximo passo seria uma contribuição no pacote**.
 
+### Utilizando queries diretamente para o repositório
+
+É possível, caso necessário, utilizar diretamente queries SQL para buscar os dados, sem utilizar os mapeamentos e com objetos customizados, conforme exemplio abaixo:
+
+```csharp
+
+    public IEnumerable<ViewModelClass> GetWithSQL(int categoryId)
+        => _repository.GetData<ViewModelClass>("SELECT * FROM SAMPLEENTITY WHERE CATEGORYID = :CATEGORYID",
+        new
+        {
+            CategoryId = categoryId
+        });
+
+```
+
 ## Extendendo o Migrations
 
 Para extender o Migrations, criando os próprios sem perder os recursos deste pacote, basta fazer o seguinte: 

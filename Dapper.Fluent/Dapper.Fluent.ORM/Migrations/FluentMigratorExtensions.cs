@@ -4,10 +4,8 @@ using System.Linq;
 using FluentMigrator.Builders.Create.Table;
 using FluentMigrator;
 using IFluentSyntax = FluentMigrator.Infrastructure.IFluentSyntax;
-using Dapper.FluentMap.Dommel.Mapping;
 using Dapper.FluentMap.Mapping;
 using Dapper.Fluent.ORM.Mapping;
-using static Dapper.SqlMapper;
 using Dapper.Fluent.ORM.Extensions;
 
 namespace Dapper.Fluent.ORM.Migrations
@@ -64,7 +62,7 @@ namespace Dapper.Fluent.ORM.Migrations
         public static void CreateForeignKey(this MigrationBase @this, IDapperFluentEntityMap entity)
         {
             entity.PropertyMaps.Cast<DapperFluentPropertyMap>()
-                        .Where(p => p.IsForeignKey())
+                        .Where(p => p.IsForeignKey() && !@this.Schema.Table(entity.TableName).Constraint(p.ForeignKey.FKName).Exists())
                         .ToList()
                         .ForEach(column =>
                         {
@@ -104,6 +102,6 @@ namespace Dapper.Fluent.ORM.Migrations
                     c.NotNullable();
             }
             return table;
-        }        
+        }
     }
 }

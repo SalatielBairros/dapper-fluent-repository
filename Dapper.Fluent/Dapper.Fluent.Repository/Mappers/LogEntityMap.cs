@@ -6,10 +6,10 @@ namespace Dapper.Fluent.Repository.FluentMapper
 {
     public class LogEntityMap : DapperFluentEntityMap<LogEntity>
     {
-        public LogEntityMap(string schema)
-            : base(schema)
+        public LogEntityMap()
+            : base()
         {
-            ToTable("log", schema);
+            ToTable("log");
             MapToColumn(x => x.Id).IsKey().IsIdentity();
             MapToColumn(x => x.IntProperty).Default(5).NotNull();
             MapToColumn(x => x.LimitedTextProperty).WithLenght(255);

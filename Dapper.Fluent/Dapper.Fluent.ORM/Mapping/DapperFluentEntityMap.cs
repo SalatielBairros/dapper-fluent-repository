@@ -3,17 +3,24 @@ using System.Reflection;
 using System;
 using Dapper.FluentMap.Dommel.Mapping;
 using Dapper.FluentMap.Utils;
+using Dapper.Fluent.ORM.Extensions;
 
 namespace Dapper.Fluent.ORM.Mapping
 {
     public abstract class DapperFluentEntityMap<TEntity> : DommelEntityMap<TEntity>, IDapperFluentEntityMap where TEntity : class
     {
-        public string Schema { get; }
+        public string Schema { get; private set; }
         public bool IsValidated { get; private set; } = false;
+        public bool IsDynamicSchema { get; private set; } = false;
 
         public DapperFluentEntityMap(string schema)
         {
             Schema = schema;          
+        }
+
+        public DapperFluentEntityMap()
+        {
+            IsDynamicSchema = true;
         }
 
         protected override DommelPropertyMap GetPropertyMap(PropertyInfo info) => new DapperFluentPropertyMap(info);
@@ -30,6 +37,12 @@ namespace Dapper.Fluent.ORM.Mapping
         {
             IsValidated = true;
             return this;
+        }
+
+        public void WithSchema(string schema)
+        {
+            Schema = schema;
+            ToTable(TableName.GetTableName(), Schema);
         }
     }
 }

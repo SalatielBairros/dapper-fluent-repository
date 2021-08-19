@@ -25,5 +25,11 @@ namespace Dapper.Fluent.Repository.Impl
                 entity.Category = category;
                 return entity;
             });
+
+        public IEnumerable<PublicSchemaEntity> GetWithSQL(int categoryId)
+            => _repository.GetData("SELECT * FROM SAMPLEENTITY WHERE CATEGORYID = :CATEGORYID", new
+            {
+                CategoryId = categoryId
+            });
     }
 }

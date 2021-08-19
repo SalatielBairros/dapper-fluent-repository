@@ -2,24 +2,24 @@
 using Dapper.Fluent.ORM.Contracts;
 using Dapper.Fluent.Repository.FluentMapper;
 
-namespace Dapper.Fluent.API.Util
+namespace Dapper.Fluent.Repository.Mappers
 {
     public class MapperConfiguration : IMapperConfiguration
     {
         private readonly IRepositorySettings _repository;
-        private readonly IRequestInfo _info;
 
-        public MapperConfiguration(IRepositorySettings repository, IRequestInfo info)
+        public MapperConfiguration(IRepositorySettings repository)
         {
             this._repository = repository;
-            this._info = info;
         }
 
         public void ConfigureMappers()
         {
             FluentMapping.AddMap(new CategoryMap(_repository.DefaultSchema));
             FluentMapping.AddMap(new PublicSchemaEntityMap(_repository.DefaultSchema));
-            FluentMapping.AddMap(new LogEntityMap(_info.Schema));
+            FluentMapping.AddMap(new LogEntityMap());
         }
+
+        public void SetDynamicSchema(string schema) => FluentMapping.SetDynamicSchema(schema);
     }
 }
