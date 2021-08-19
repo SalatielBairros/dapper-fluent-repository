@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Dapper.Fluent.ORM.Extensions
+﻿namespace Dapper.Fluent.ORM.Extensions
 {
     internal static class StringExtensions
     {

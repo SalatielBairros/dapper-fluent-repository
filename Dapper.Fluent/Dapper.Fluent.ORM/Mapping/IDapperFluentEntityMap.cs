@@ -1,9 +1,10 @@
-﻿using Dapper.FluentMap.Dommel.Mapping;
+﻿using Dapper.FluentMap.Mapping;
 
 namespace Dapper.Fluent.ORM.Mapping
 {
-    public interface IDapperFluentEntityMap : IDommelEntityMap
+    public interface IDapperFluentEntityMap : IEntityMap
     {
+        string TableName { get; }
         string Schema { get; }
         bool IsValidated { get; }
         bool IsDynamicSchema { get; }

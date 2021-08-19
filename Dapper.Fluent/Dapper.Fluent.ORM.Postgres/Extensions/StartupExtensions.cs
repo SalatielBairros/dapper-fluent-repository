@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Reflection;
 using Dapper.Fluent.ORM.Contracts;
 using Dapper.Fluent.ORM.Extensions;
 using Dapper.Fluent.ORM.Postgres.Contracts;
-using Dapper.FluentMap.Dommel;
 using FluentMigrator.Runner;
 using Microsoft.Extensions.DependencyInjection;
 

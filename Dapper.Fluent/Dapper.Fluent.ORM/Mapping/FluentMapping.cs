@@ -1,8 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Dapper.Fluent.ORM.Mapping;
-using Dapper.FluentMap;
 using Dapper.FluentMap.Mapping;
 using Dapper.FluentMap.TypeMaps;
+using static Dapper.SqlMapper;
 
 namespace Dapper.Fluent.Mapping
 {
@@ -12,7 +13,7 @@ namespace Dapper.Fluent.Mapping
         {
             if (FluentMap.FluentMapper.EntityMaps.TryAdd(typeof(TEntity), entityMap))
             {
-                SqlMapper.SetTypeMap(typeof(TEntity), new FluentMapTypeMap<TEntity>());
+                SetTypeMap(typeof(TEntity), new FluentMapTypeMap<TEntity>());
             }
         }
 
@@ -27,6 +28,11 @@ namespace Dapper.Fluent.Mapping
             foreach (var map in FluentMap.FluentMapper.EntityMaps.Where(x => ((IDapperFluentEntityMap)x.Value).IsDynamicSchema))
             {
                 ((IDapperFluentEntityMap)FluentMap.FluentMapper.EntityMaps[map.Key]).WithSchema(schema);
+
+                Type[] typeArgs = { map.Key };
+                var fluentMap = (ITypeMap)Activator.CreateInstance(typeof(FluentMapTypeMap<>).MakeGenericType(typeArgs));
+
+                SetTypeMap(map.Key, fluentMap);
             }
         }
     }

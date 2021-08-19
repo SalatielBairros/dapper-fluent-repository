@@ -1,9 +1,6 @@
-﻿using System;
-using System.Linq;
-using Dapper.Fluent.ORM.Contracts;
+﻿using System.Linq;
 using Dapper.Fluent.ORM.Mapping;
 using FluentMigrator;
-using FluentMigrator.Runner.Versioning;
 
 namespace Dapper.Fluent.ORM.Migrations
 {

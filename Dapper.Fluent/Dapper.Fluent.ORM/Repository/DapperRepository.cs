@@ -5,7 +5,6 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Dapper.Fluent.ORM.Contracts;
 using Dommel;
-using FluentMigrator.Runner;
 
 namespace Dapper.Fluent.ORM.Repository
 {

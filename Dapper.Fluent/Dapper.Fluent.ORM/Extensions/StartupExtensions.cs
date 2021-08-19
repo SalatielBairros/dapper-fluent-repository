@@ -1,10 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using FluentMigrator.Runner;
 using Dapper.Fluent.ORM.Migrations;
-using Dapper.FluentMap.Dommel;
 using Dapper.Fluent.ORM.Contracts;
 using System.Reflection;
 using System.Linq;
+using Dommel;
+using Dapper.Fluent.Mapping.Resolvers;
 
 namespace Dapper.Fluent.ORM.Extensions
 {
@@ -28,7 +29,10 @@ namespace Dapper.Fluent.ORM.Extensions
         {
             FluentMap.FluentMapper.Initialize(config =>
             {
-                config.ForDommel();
+                DommelMapper.SetColumnNameResolver(new ColumnNameResolver());
+                DommelMapper.SetKeyPropertyResolver(new KeyPropertyResolver());
+                DommelMapper.SetTableNameResolver(new TableNameResolver());
+                DommelMapper.SetPropertyResolver(new PropertyResolver());
             });
             return services.AddScoped<IMapperConfiguration, T>();
         }

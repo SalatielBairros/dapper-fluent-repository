@@ -1,13 +1,13 @@
-﻿using System;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Reflection;
 using Dapper.Fluent.Mapping;
 using Dapper.Fluent.ORM.Extensions;
-using Dapper.FluentMap.Dommel.Mapping;
+using Dapper.FluentMap.Mapping;
 
 namespace Dapper.Fluent.ORM.Mapping
 {
-    public class DapperFluentPropertyMap : DommelPropertyMap
+    public class DapperFluentPropertyMap : PropertyMapBase<DapperFluentPropertyMap>, IPropertyMap
     {
         public DapperFluentPropertyMap(PropertyInfo info)
             : base(info)
@@ -51,6 +51,30 @@ namespace Dapper.Fluent.ORM.Mapping
 
             var fkName = $"FK_{ColumnName}_{primaryColumn}_{primaryTable}";
             ForeignKey = new ForeignKeyMap(fkName, primaryTable, primaryColumn, map.Schema);
+            return this;
+        }
+
+        public bool Key { get; private set; }
+
+        public bool Identity { get; set; }
+
+        public DatabaseGeneratedOption? GeneratedOption { get; set; }
+
+        public DapperFluentPropertyMap IsKey()
+        {
+            Key = true;
+            return this;
+        }
+
+        public DapperFluentPropertyMap IsIdentity()
+        {
+            Identity = true;
+            return this;
+        }
+
+        public DapperFluentPropertyMap SetGeneratedOption(DatabaseGeneratedOption option)
+        {
+            GeneratedOption = option;
             return this;
         }
 
