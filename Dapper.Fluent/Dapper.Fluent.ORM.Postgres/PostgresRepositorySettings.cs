@@ -12,5 +12,6 @@ namespace Dapper.Fluent.ORM.Postgres
         public string ConnString { get; set; }
         public string Schema { get; set; }
         public string DefaultSchema { get; set; }
+        public bool EnablePooling { get; set; }
     }
 }

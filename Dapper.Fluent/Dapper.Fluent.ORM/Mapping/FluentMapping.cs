@@ -1,39 +1,49 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Dapper.Fluent.ORM.Mapping;
+using Dapper.FluentMap;
 using Dapper.FluentMap.Mapping;
-using Dapper.FluentMap.TypeMaps;
 using static Dapper.SqlMapper;
 
-namespace Dapper.Fluent.Mapping
+namespace Dapper.Fluent.Mapping;
+
+public static class FluentMapping
 {
-    public static class FluentMapping
+    public static void AddMap<TEntity>(IEntityMap<TEntity> entityMap)
     {
-        public static void AddMap<TEntity>(IEntityMap<TEntity> entityMap)
+        if (FluentMapper.EntityMaps.TryAdd(typeof(TEntity), entityMap))
         {
-            if (FluentMap.FluentMapper.EntityMaps.TryAdd(typeof(TEntity), entityMap))
-            {
-                SetTypeMap(typeof(TEntity), new FluentMapTypeMap<TEntity>());
-            }
+            SetTypeMap(typeof(TEntity), new DommelFluentMapTypeMap<TEntity>());
         }
+    }
 
-        public static IDapperFluentEntityMap GetMapOf<T>()
+    public static IDapperFluentEntityMap GetMapOf<T>()
+    {
+        FluentMapper.EntityMaps.TryGetValue(typeof(T), out var map);
+        return (IDapperFluentEntityMap)map;
+    }
+
+    public static void SetDynamicSchema(string schema)
+    {
+        foreach (var map in FluentMapper.EntityMaps.Where(x => ((IDapperFluentEntityMap)x.Value).IsDynamicSchema))
         {
-            FluentMap.FluentMapper.EntityMaps.TryGetValue(typeof(T), out var map);
-            return (IDapperFluentEntityMap)map;
+            ((IDapperFluentEntityMap)FluentMapper.EntityMaps[map.Key]).WithSchema(schema);
+
+            Type[] typeArgs = { map.Key };
+            var fluentMap = (ITypeMap)Activator.CreateInstance(typeof(DommelFluentMapTypeMap<>).MakeGenericType(typeArgs));
+
+            SetTypeMap(map.Key, fluentMap);
         }
+    }
 
-        public static void SetDynamicSchema(string schema)
-        {
-            foreach (var map in FluentMap.FluentMapper.EntityMaps.Where(x => ((IDapperFluentEntityMap)x.Value).IsDynamicSchema))
-            {
-                ((IDapperFluentEntityMap)FluentMap.FluentMapper.EntityMaps[map.Key]).WithSchema(schema);
-
-                Type[] typeArgs = { map.Key };
-                var fluentMap = (ITypeMap)Activator.CreateInstance(typeof(FluentMapTypeMap<>).MakeGenericType(typeArgs));
-
-                SetTypeMap(map.Key, fluentMap);
-            }
-        }
+    public static IEnumerable<Type> GetJsonTypes()
+    {
+        return FluentMapper.EntityMaps
+            .SelectMany(x => x.Value.PropertyMaps)
+            .Cast<DapperFluentPropertyMap>()
+            .Where(x => x.IsJson)
+            .Select(x => x.PropertyInfo.PropertyType)
+            .Distinct();
     }
 }

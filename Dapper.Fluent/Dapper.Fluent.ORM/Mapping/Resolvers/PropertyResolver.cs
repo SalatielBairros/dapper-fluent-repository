@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Reflection;
 using Dapper.Fluent.ORM.Mapping;
+using Dapper.FluentMap;
 using Dapper.FluentMap.Mapping;
 using Dommel;
 
@@ -13,39 +14,28 @@ namespace Dapper.Fluent.Mapping.Resolvers
     {
         private static readonly IPropertyResolver DefaultResolver = new DefaultPropertyResolver();
 
-        protected override IEnumerable<PropertyInfo> FilterComplexTypes(IEnumerable<PropertyInfo> properties)
+        private IEnumerable<DapperFluentPropertyMap> FilterTypes(IEnumerable<DapperFluentPropertyMap> properties)
         {
-            foreach (var propertyInfo in properties)
+            foreach (var property in properties.Where(x => !x.Ignored))
             {
-                var type = propertyInfo.PropertyType;
+                var type = property.PropertyInfo.PropertyType;
                 type = Nullable.GetUnderlyingType(type) ?? type;
 
-                if (type.GetTypeInfo().IsPrimitive || type.GetTypeInfo().IsEnum || PrimitiveTypes.Contains(type))
+                if (type.GetTypeInfo().IsPrimitive || type.GetTypeInfo().IsEnum || PrimitiveTypes.Contains(type) || property.IsJson)
                 {
-                    yield return propertyInfo;
+                    yield return property;
                 }
             }
         }
 
         public override IEnumerable<ColumnPropertyInfo> ResolveProperties(Type type)
         {
-            if (FluentMap.FluentMapper.EntityMaps.TryGetValue(type, out IEntityMap entityMap))
+            if (FluentMapper.EntityMaps.TryGetValue(type, out IEntityMap entityMap))
             {
-                foreach (var property in FilterComplexTypes(type.GetProperties()))
+                var properties = entityMap.PropertyMaps.Cast<DapperFluentPropertyMap>();
+                foreach (var property in FilterTypes(properties))
                 {
-                    var propertyMap = entityMap.PropertyMaps.FirstOrDefault(p => p.PropertyInfo.Name == property.Name);
-                    if (propertyMap == null || !propertyMap.Ignored)
-                    {
-                        var fluentPropertyMap = propertyMap as DapperFluentPropertyMap;
-                        if (fluentPropertyMap != null)
-                        {
-                            yield return new ColumnPropertyInfo(property, fluentPropertyMap.GeneratedOption ?? (fluentPropertyMap.Key ? DatabaseGeneratedOption.Identity : DatabaseGeneratedOption.None));
-                        }
-                        else
-                        {
-                            yield return new ColumnPropertyInfo(property);
-                        }
-                    }
+                    yield return new ColumnPropertyInfo(property.PropertyInfo, property.GeneratedOption ?? (property.Identity ? DatabaseGeneratedOption.Identity : DatabaseGeneratedOption.None));
                 }
             }
             else

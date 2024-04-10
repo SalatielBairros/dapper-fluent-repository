@@ -1,14 +1,13 @@
-﻿namespace Dapper.Fluent.ORM.Extensions
+﻿namespace Dapper.Fluent.ORM.Extensions;
+
+internal static class StringExtensions
 {
-    internal static class StringExtensions
+    internal static string GetTableName(this string fullTableName)
     {
-        internal static string GetTableName(this string fullTableName)
+        if (fullTableName.Contains('.'))
         {
-            if (fullTableName.Contains('.'))
-            {
-                return fullTableName.Split('.')[1].ToLowerInvariant();
-            }
-            return fullTableName;
+            return fullTableName.Split('.')[1].ToLowerInvariant();
         }
+        return fullTableName;
     }
 }

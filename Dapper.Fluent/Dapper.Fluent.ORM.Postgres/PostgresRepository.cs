@@ -1,17 +1,20 @@
 ﻿using Dapper.Fluent.ORM.Contracts;
 using Dapper.Fluent.ORM.Postgres.Contracts;
 using Dapper.Fluent.ORM.Repository;
-using FluentMigrator.Runner;
-using Microsoft.Extensions.Options;
-using Npgsql;
+using Dommel;
+using System;
 
-namespace Dapper.Fluent.ORM.Postgres
+namespace Dapper.Fluent.ORM.Postgres;
+
+public class PostgresRepository<TEntity> : DapperRepository<TEntity>, IPostgresRepository<TEntity> where TEntity : class
 {
-    public class PostgresRepository<TEntity> : DapperRepository<TEntity>, IPostgresRepository<TEntity> where TEntity : class
+    public PostgresRepository(IRepositorySettings options, IDapperORMRunner runner, ITableNameResolver tableNameResolver)
+      : base(new PostgresDapperConnection(options), runner, tableNameResolver)
     {
-        public PostgresRepository(IRepositorySettings options, IDapperORMRunner runner)
-          : base(new DapperConnection<NpgsqlConnection>(options), runner)
-        {
-        }
+    }
+
+    public override void ConfigureDatabase()
+    {
+        AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
     }
 }

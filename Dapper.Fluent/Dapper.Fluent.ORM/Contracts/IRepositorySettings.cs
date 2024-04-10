@@ -1,10 +1,10 @@
 ﻿
-namespace Dapper.Fluent.ORM.Contracts
+namespace Dapper.Fluent.ORM.Contracts;
+
+public interface IRepositorySettings
 {
-    public interface IRepositorySettings
-    {
-        string ConnString { get; }
-        string Schema { get; }
-        string DefaultSchema { get; }
-    }
+    string ConnString { get; }
+    string Schema { get; }
+    string DefaultSchema { get; }
+    bool EnablePooling { get; }
 }

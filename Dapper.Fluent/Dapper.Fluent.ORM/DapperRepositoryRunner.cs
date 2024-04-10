@@ -1,53 +1,82 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
+using Dapper.Fluent.Mapping;
 using Dapper.Fluent.ORM.Contracts;
 using Dapper.Fluent.ORM.MultiSchema;
 using FluentMigrator.Runner;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Dapper.Fluent.ORM
+namespace Dapper.Fluent.ORM;
+
+public class DapperRepositoryRunner : IDapperORMRunner
 {
-    public class DapperRepositoryRunner : IDapperORMRunner
+    private readonly IServiceProvider _serviceProvider;
+    private static readonly object ThisLock = new object();
+    public static ConcurrentBag<string> MigratedSchemas = new ConcurrentBag<string>();
+
+    public DapperRepositoryRunner(IServiceProvider serviceProvider)
     {
-        private readonly IServiceProvider _serviceProvider;
-        private readonly List<string> _migratedSchemas;
+        _serviceProvider = serviceProvider;
+    }
 
-        public DapperRepositoryRunner(IServiceProvider serviceProvider)
-        {
-            _serviceProvider = serviceProvider;
-            _migratedSchemas = new List<string>();
-        }
+    public void AddMappers()
+    {
+        using var scope = _serviceProvider.CreateScope();
+        scope.ServiceProvider
+            .GetService<IMapperConfiguration>()
+            .ConfigureMappers();
+    }
 
-        public void AddMappers()
-        {
-            using var scope = _serviceProvider.CreateScope();
-            scope.ServiceProvider
-                .GetService<IMapperConfiguration>()
-                .ConfigureMappers();            
-        }
-
-        public void CreateTablesFromMigrations()
+    public void CreateTablesFromMigrations()
+    {
+        lock (ThisLock)
         {
             using var scope = _serviceProvider.CreateScope();
-            var requestInfo = scope.ServiceProvider.GetService<IRequestInfo>();
+            var schemaProxy = scope.ServiceProvider.GetService<ISchema>();
 
-            if(requestInfo != null)
+            var schema = schemaProxy.GetSchema();
+
+            if (schema != null)
             {
-                var schema = requestInfo.GetSchema();
+                FluentMapping.SetDynamicSchema(schema);
 
-                if (_migratedSchemas.Contains(schema))
+                if (MigratedSchemas.Contains(schema))
                     return;
 
-                scope.ServiceProvider
-                    .GetService<IMapperConfiguration>()
-                    .SetDynamicSchema(schema);
+                var jsonProperties = FluentMapping.GetJsonTypes();
+                if (jsonProperties.Any())
+                {
+                    var jsonHandler = scope.ServiceProvider.GetService<IJsonPropertyHandler>();
+                    if (jsonHandler != null)
+                    {
+                        try
+                        {
+                            jsonHandler.SetJsonTypes(jsonProperties.ToArray());
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                            throw;
+                        }
+                    }
+                }
 
-                _migratedSchemas.Add(schema);
+                MigratedSchemas.Add(schema);
             }
 
-            scope.ServiceProvider
-                .GetService<IMigrationRunner>()
-                .MigrateUp();
+            try
+            {
+                scope.ServiceProvider
+                    .GetService<IMigrationRunner>()
+                    .MigrateUp();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                throw;
+            }
         }
     }
 }

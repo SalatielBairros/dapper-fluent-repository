@@ -15,23 +15,32 @@ namespace Dapper.Fluent.ORM.Migrations
         private readonly static Dictionary<Type, Func<ICreateTableColumnAsTypeSyntax, ICreateTableColumnOptionOrWithColumnSyntax>> mappedTypes = new Dictionary<Type, Func<ICreateTableColumnAsTypeSyntax, ICreateTableColumnOptionOrWithColumnSyntax>>
         {
             [typeof(int)] = c => c.AsInt32(),
+            [typeof(int?)] = c => c.AsInt32(),
             [typeof(Int64)] = c => c.AsInt64(),
             [typeof(short)] = c => c.AsInt16(),
+            [typeof(short?)] = c => c.AsInt16(),
             [typeof(long)] = c => c.AsInt64(),
+            [typeof(long?)] = c => c.AsInt64(),
             [typeof(float)] = c => c.AsFloat(),
+            [typeof(float?)] = c => c.AsFloat(),
             [typeof(double)] = c => c.AsDouble(),
+            [typeof(double?)] = c => c.AsDouble(),
             [typeof(decimal)] = c => c.AsDecimal(),
+            [typeof(decimal?)] = c => c.AsDecimal(),
             [typeof(string)] = c => c.AsString(),
             [typeof(String)] = c => c.AsString(),
             [typeof(bool)] = c => c.AsBoolean(),
+            [typeof(bool?)] = c => c.AsBoolean(),
             [typeof(Dictionary<string, string>)] = c => c.AsCustom("hstore"),
             [typeof(Guid)] = c => c.AsGuid(),
+            [typeof(Guid?)] = c => c.AsGuid(),
             [typeof(DateTime)] = c => c.AsDateTime2(),
+            [typeof(DateTime?)] = c => c.AsDateTime2(),
             [typeof(TimeSpan)] = c => c.AsTime(),
             [typeof(byte[])] = c => c.AsCustom("bytea"),
             [typeof(string[])] = c => c.AsCustom("text[]"),
             [typeof(String[])] = c => c.AsCustom("text[]"),
-            [typeof(Enum)] = c => c.AsInt32(),
+            [typeof(Enum)] = c => c.AsInt32()
         };
 
         public static IFluentSyntax CreateSchemaIfNotExists(this MigrationBase self, string schema)
@@ -46,12 +55,14 @@ namespace Dapper.Fluent.ORM.Migrations
             }
         }
 
-        public static IFluentSyntax CreateTableIfNotExists(this MigrationBase @this, IDapperFluentEntityMap map)
+        public static IFluentSyntax CreateTableIfNotExists(this MigrationBase @this, IDapperFluentEntityMap map, string tenantchema)
         {
             var tableName = map.TableName.GetTableName();
-            if (!@this.Schema.Schema(map.Schema).Table(tableName).Exists())
+            var schemaName = map.IsDynamicSchema && !string.IsNullOrEmpty(tenantchema) ? tenantchema : map.Schema;
+
+            if (!@this.Schema.Schema(schemaName).Table(tableName).Exists())
             {
-                return @this.Create.Table(tableName).InSchema(map.Schema).AddColumns(map.PropertyMaps);
+                return @this.Create.Table(tableName).InSchema(schemaName).AddColumns(map.PropertyMaps);
             }
             else
             {
@@ -80,10 +91,22 @@ namespace Dapper.Fluent.ORM.Migrations
             var type = column.PropertyInfo.PropertyType;
             if (column.HasLenght() && type == typeof(string))
             {
-                return @this.AsFixedLengthString(column.Lenght);
+                return @this.AsCustom($"varchar({column.Lenght})");
             }
+            if (type.IsEnum || type.IsNullableEnum())
+            {
+                return @this.AsInt32();
+            }
+            if (!type.IsPrimitive && column.IsJson)
+            {
+                return @this.AsCustom("jsonb");
+            }
+
             return mappedTypes[column.PropertyInfo.PropertyType](@this);
         }
+
+        private static bool IsNullableEnum(this Type @this)
+            => @this.IsGenericType && @this.GetGenericTypeDefinition() == typeof(Nullable<>) && @this.GetGenericArguments()[0].IsEnum;
 
         private static ICreateTableWithColumnSyntax AddColumns(this ICreateTableWithColumnSyntax table, IList<IPropertyMap> columns)
         {
@@ -95,7 +118,12 @@ namespace Dapper.Fluent.ORM.Migrations
                 if (column.Key)
                     c.PrimaryKey();
                 if (column.HasDefaultValue())
-                    c.WithDefaultValue(column.DefaultValue);
+                {
+                    if (column.DefaultValue is SystemMethods)
+                        c.WithDefault((SystemMethods)column.DefaultValue);
+                    else
+                        c.WithDefaultValue(column.DefaultValue);
+                }
                 if (column.AllowNull)
                     c.Nullable();
                 else

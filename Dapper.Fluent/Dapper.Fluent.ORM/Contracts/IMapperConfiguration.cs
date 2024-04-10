@@ -1,8 +1,6 @@
-﻿namespace Dapper.Fluent.ORM.Contracts
+﻿namespace Dapper.Fluent.ORM.Contracts;
+
+public interface IMapperConfiguration
 {
-    public interface IMapperConfiguration
-    {
-        void ConfigureMappers();
-        void SetDynamicSchema(string schema);
-    }
+    void ConfigureMappers();
 }

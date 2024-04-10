@@ -1,9 +1,8 @@
 ﻿
-namespace Dapper.Fluent.ORM.Contracts
+namespace Dapper.Fluent.ORM.Contracts;
+
+public interface IDapperORMRunner
 {
-    public interface IDapperORMRunner
-    {
-        void AddMappers();
-        void CreateTablesFromMigrations();
-    }
+    void AddMappers();
+    void CreateTablesFromMigrations();
 }
