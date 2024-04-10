@@ -11,7 +11,7 @@ namespace Dommel;
 /// <summary>
 /// Represents a typed SQL expression.
 /// </summary>
-/// <typeparam name="TEntity">The type of the entity.</typeparam>
+/// <typeparam name="TEntity">The type of the entity.</typeparam>\
 public class SqlExpression<TEntity>
 {
     private static readonly Type EntityType = typeof(TEntity);
@@ -48,9 +48,9 @@ public class SqlExpression<TEntity>
     /// Selects all columns from <typeparamref name="TEntity"/>.
     /// </summary>
     /// <returns>The current <see cref="SqlExpression{TEntity}"/> instance.</returns>
-    public virtual SqlExpression<TEntity> Select()
+    public virtual SqlExpression<TEntity> Select(ITableNameResolver tableNameResolver)
     {
-        _selectQuery = $"select * from {Resolvers.Table(typeof(TEntity), SqlBuilder)}";
+        _selectQuery = $"select * from {Resolvers.Table(typeof(TEntity), SqlBuilder, tableNameResolver)}";
         return this;
     }
 
@@ -59,8 +59,9 @@ public class SqlExpression<TEntity>
     /// </summary>
     /// <param name="selector">The columns to select.
     /// E.g. <code>x => new { x.Foo, x.Bar }</code>.</param>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
     /// <returns>The current <see cref="SqlExpression{TEntity}"/> instance.</returns>
-    public virtual SqlExpression<TEntity> Select(Expression<Func<TEntity, object>> selector)
+    public virtual SqlExpression<TEntity> Select(Expression<Func<TEntity, object>> selector, ITableNameResolver tableNameResolver)
     {
         if (selector == null)
         {
@@ -99,7 +100,7 @@ public class SqlExpression<TEntity>
         var columns = props.Select(p => Resolvers.Column(p, SqlBuilder));
 
         // Create the select query
-        var tableName = Resolvers.Table(EntityType, SqlBuilder);
+        var tableName = Resolvers.Table(EntityType, SqlBuilder, tableNameResolver);
         _selectQuery = $"select {string.Join(", ", columns)} from {tableName}";
         return this;
     }

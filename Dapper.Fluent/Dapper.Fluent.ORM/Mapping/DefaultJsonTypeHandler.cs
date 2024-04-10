@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System;
+using Newtonsoft.Json;
 
 namespace Dapper.Fluent.ORM.Mapping;
 

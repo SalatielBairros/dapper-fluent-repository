@@ -1,6 +1,7 @@
 ﻿using Dapper.FluentMap.Mapping;
 using System.Collections.Concurrent;
 using System;
+using System.Linq;
 
 namespace Dapper.Fluent.ORM.Mapping;
 

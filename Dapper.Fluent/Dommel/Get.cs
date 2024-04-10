@@ -17,12 +17,13 @@ public static partial class DommelMapper
     /// <typeparam name="TEntity">The type of the entity.</typeparam>
     /// <param name="connection">The connection to the database. This can either be open or closed.</param>
     /// <param name="id">The id of the entity in the database.</param>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
     /// <param name="transaction">Optional transaction for the command.</param>
     /// <returns>The entity with the corresponding id.</returns>
-    public static TEntity? Get<TEntity>(this IDbConnection connection, object id, IDbTransaction? transaction = null)
+    public static TEntity? Get<TEntity>(this IDbConnection connection, object id, ITableNameResolver tableNameResolver, IDbTransaction? transaction = null)
         where TEntity : class
     {
-        var sql = BuildGetById(GetSqlBuilder(connection), typeof(TEntity), id, out var parameters);
+        var sql = BuildGetById(GetSqlBuilder(connection), typeof(TEntity), id, tableNameResolver, out var parameters);
         LogQuery<TEntity>(sql);
         return connection.QueryFirstOrDefault<TEntity>(sql, parameters, transaction);
     }
@@ -33,23 +34,24 @@ public static partial class DommelMapper
     /// <typeparam name="TEntity">The type of the entity.</typeparam>
     /// <param name="connection">The connection to the database. This can either be open or closed.</param>
     /// <param name="id">The id of the entity in the database.</param>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
     /// <param name="transaction">Optional transaction for the command.</param>
     ///  <param name="cancellationToken">Optional cancellation token for the command.</param>
     /// <returns>The entity with the corresponding id.</returns>
-    public static async Task<TEntity?> GetAsync<TEntity>(this IDbConnection connection, object id, IDbTransaction? transaction = null, CancellationToken cancellationToken = default)
+    public static async Task<TEntity?> GetAsync<TEntity>(this IDbConnection connection, object id, ITableNameResolver tableNameResolver, IDbTransaction? transaction = null, CancellationToken cancellationToken = default)
         where TEntity : class
     {
-        var sql = BuildGetById(GetSqlBuilder(connection), typeof(TEntity), id, out var parameters);
+        var sql = BuildGetById(GetSqlBuilder(connection), typeof(TEntity), id, tableNameResolver, out var parameters);
         LogQuery<TEntity>(sql);
         return await connection.QueryFirstOrDefaultAsync<TEntity>(new CommandDefinition(sql, parameters, transaction: transaction, cancellationToken: cancellationToken));
     }
 
-    internal static string BuildGetById(ISqlBuilder sqlBuilder, Type type, object id, out DynamicParameters parameters)
+    internal static string BuildGetById(ISqlBuilder sqlBuilder, Type type, object id, ITableNameResolver tableNameResolver, out DynamicParameters parameters)
     {
-        var cacheKey = new QueryCacheKey(QueryCacheType.Get, sqlBuilder, type);
+        var tableName = Resolvers.Table(type, sqlBuilder, tableNameResolver);
+        var cacheKey = new QueryCacheKey(QueryCacheType.Get, sqlBuilder, type, tableName);
         if (!QueryCache.TryGetValue(cacheKey, out var sql))
         {
-            var tableName = Resolvers.Table(type, sqlBuilder);
             var keyProperties = Resolvers.KeyProperties(type);
             if (keyProperties.Length > 1)
             {
@@ -73,27 +75,29 @@ public static partial class DommelMapper
     /// </summary>
     /// <typeparam name="TEntity">The type of the entity.</typeparam>
     /// <param name="connection">The connection to the database. This can either be open or closed.</param>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
     /// <param name="ids">The id of the entity in the database.</param>
     /// <returns>The entity with the corresponding id.</returns>
-    public static TEntity? Get<TEntity>(this IDbConnection connection, params object[] ids) where TEntity : class
-        => Get<TEntity>(connection, ids, transaction: null);
+    public static TEntity? Get<TEntity>(this IDbConnection connection, ITableNameResolver tableNameResolver, params object[] ids) where TEntity : class
+        => Get<TEntity>(connection, tableNameResolver, ids, transaction: null);
 
     /// <summary>
     /// Retrieves the entity of type <typeparamref name="TEntity"/> with the specified id.
     /// </summary>
     /// <typeparam name="TEntity">The type of the entity.</typeparam>
     /// <param name="connection">The connection to the database. This can either be open or closed.</param>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
     /// <param name="ids">The id of the entity in the database.</param>
     /// <param name="transaction">Optional transaction for the command.</param>
     /// <returns>The entity with the corresponding id.</returns>
-    public static TEntity? Get<TEntity>(this IDbConnection connection, object[] ids, IDbTransaction? transaction = null) where TEntity : class
+    public static TEntity? Get<TEntity>(this IDbConnection connection, ITableNameResolver tableNameResolver, object[] ids, IDbTransaction? transaction = null) where TEntity : class
     {
         if (ids.Length == 1)
         {
-            return Get<TEntity>(connection, ids[0], transaction);
+            return Get<TEntity>(connection, ids[0], tableNameResolver, transaction);
         }
 
-        var sql = BuildGetByIds(connection, typeof(TEntity), ids, out var parameters);
+        var sql = BuildGetByIds(connection, typeof(TEntity), tableNameResolver, ids, out var parameters);
         LogQuery<TEntity>(sql);
         return connection.QueryFirstOrDefault<TEntity>(sql, parameters, transaction);
     }
@@ -103,10 +107,11 @@ public static partial class DommelMapper
     /// </summary>
     /// <typeparam name="TEntity">The type of the entity.</typeparam>
     /// <param name="connection">The connection to the database. This can either be open or closed.</param>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
     /// <param name="ids">The id of the entity in the database.</param>
     /// <returns>The entity with the corresponding id.</returns>
-    public static Task<TEntity?> GetAsync<TEntity>(this IDbConnection connection, params object[] ids) where TEntity : class
-        => GetAsync<TEntity>(connection, ids, transaction: null, cancellationToken: default);
+    public static Task<TEntity?> GetAsync<TEntity>(this IDbConnection connection, ITableNameResolver tableNameResolver, params object[] ids) where TEntity : class
+        => GetAsync<TEntity>(connection, ids, tableNameResolver, transaction: null, cancellationToken: default);
 
     /// <summary>
     /// Retrieves the entity of type <typeparamref name="TEntity"/> with the specified id.
@@ -114,29 +119,30 @@ public static partial class DommelMapper
     /// <typeparam name="TEntity">The type of the entity.</typeparam>
     /// <param name="connection">The connection to the database. This can either be open or closed.</param>
     /// <param name="ids">The id of the entity in the database.</param>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
     /// <param name="transaction">Optional transaction for the command.</param>
     /// <param name="cancellationToken">Optional cancellation token for the command.</param>
     /// <returns>The entity with the corresponding id.</returns>
-    public static async Task<TEntity?> GetAsync<TEntity>(this IDbConnection connection, object[] ids, IDbTransaction? transaction = null, CancellationToken cancellationToken = default)
+    public static async Task<TEntity?> GetAsync<TEntity>(this IDbConnection connection, object[] ids, ITableNameResolver tableNameResolver, IDbTransaction? transaction = null, CancellationToken cancellationToken = default)
         where TEntity : class
     {
         if (ids.Length == 1)
         {
-            return await GetAsync<TEntity>(connection, ids[0], transaction, cancellationToken);
+            return await GetAsync<TEntity>(connection, ids[0], tableNameResolver, transaction, cancellationToken);
         }
 
-        var sql = BuildGetByIds(connection, typeof(TEntity), ids, out var parameters);
+        var sql = BuildGetByIds(connection, typeof(TEntity), tableNameResolver, ids, out var parameters);
         LogQuery<TEntity>(sql);
         return await connection.QueryFirstOrDefaultAsync<TEntity>(new CommandDefinition(sql, parameters, transaction, cancellationToken: cancellationToken));
     }
 
-    internal static string BuildGetByIds(IDbConnection connection, Type type, object[] ids, out DynamicParameters parameters)
+    internal static string BuildGetByIds(IDbConnection connection, Type type, ITableNameResolver tableNameResolver, object[] ids, out DynamicParameters parameters)
     {
         var sqlBuilder = GetSqlBuilder(connection);
-        var cacheKey = new QueryCacheKey(QueryCacheType.GetByMultipleIds, sqlBuilder, type);
+        var tableName = Resolvers.Table(type, sqlBuilder, tableNameResolver);
+        var cacheKey = new QueryCacheKey(QueryCacheType.GetByMultipleIds, sqlBuilder, type, tableName);
         if (!QueryCache.TryGetValue(cacheKey, out var sql))
         {
-            var tableName = Resolvers.Table(type, sqlBuilder);
             var keyProperties = Resolvers.KeyProperties(type);
             var keyColumnNames = keyProperties.Select(p => Resolvers.Column(p.Property, sqlBuilder)).ToArray();
             if (keyColumnNames.Length != ids.Length)
@@ -175,15 +181,16 @@ public static partial class DommelMapper
     /// </summary>
     /// <typeparam name="TEntity">The type of the entity.</typeparam>
     /// <param name="connection">The connection to the database. This can either be open or closed.</param>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
     /// <param name="buffered">
     /// A value indicating whether the result of the query should be executed directly,
     /// or when the query is materialized (using <c>ToList()</c> for example).
     /// </param>
     /// <param name="transaction">Optional transaction for the command.</param>
     /// <returns>A collection of entities of type <typeparamref name="TEntity"/>.</returns>
-    public static IEnumerable<TEntity> GetAll<TEntity>(this IDbConnection connection, IDbTransaction? transaction = null, bool buffered = true) where TEntity : class
+    public static IEnumerable<TEntity> GetAll<TEntity>(this IDbConnection connection, ITableNameResolver tableNameResolver, IDbTransaction? transaction = null, bool buffered = true) where TEntity : class
     {
-        var sql = BuildGetAllQuery(connection, typeof(TEntity));
+        var sql = BuildGetAllQuery(connection, typeof(TEntity), tableNameResolver);
         LogQuery<TEntity>(sql);
         return connection.Query<TEntity>(sql, transaction: transaction, buffered: buffered);
     }
@@ -193,23 +200,25 @@ public static partial class DommelMapper
     /// </summary>
     /// <typeparam name="TEntity">The type of the entity.</typeparam>
     /// <param name="connection">The connection to the database. This can either be open or closed.</param>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
     /// <param name="transaction">Optional transaction for the command.</param>
     /// <param name="cancellationToken">Optional cancellation token for the command.</param>
     /// <returns>A collection of entities of type <typeparamref name="TEntity"/>.</returns>
-    public static Task<IEnumerable<TEntity>> GetAllAsync<TEntity>(this IDbConnection connection, IDbTransaction? transaction = null, CancellationToken cancellationToken = default) where TEntity : class
+    public static Task<IEnumerable<TEntity>> GetAllAsync<TEntity>(this IDbConnection connection, ITableNameResolver tableNameResolver, IDbTransaction? transaction = null, CancellationToken cancellationToken = default) where TEntity : class
     {
-        var sql = BuildGetAllQuery(connection, typeof(TEntity));
+        var sql = BuildGetAllQuery(connection, typeof(TEntity), tableNameResolver);
         LogQuery<TEntity>(sql);
         return connection.QueryAsync<TEntity>(new CommandDefinition(sql, transaction: transaction, cancellationToken: cancellationToken));
     }
 
-    internal static string BuildGetAllQuery(IDbConnection connection, Type type)
+    internal static string BuildGetAllQuery(IDbConnection connection, Type type, ITableNameResolver tableNameResolver)
     {
         var sqlBuilder = GetSqlBuilder(connection);
-        var cacheKey = new QueryCacheKey(QueryCacheType.GetAll, sqlBuilder, type);
+        var tableName = Resolvers.Table(type, sqlBuilder, tableNameResolver);
+        var cacheKey = new QueryCacheKey(QueryCacheType.GetAll, sqlBuilder, type, tableName);
         if (!QueryCache.TryGetValue(cacheKey, out var sql))
         {
-            sql = "select * from " + Resolvers.Table(type, sqlBuilder);
+            sql = "select * from " + tableName;
             QueryCache.TryAdd(cacheKey, sql);
         }
 
@@ -223,15 +232,16 @@ public static partial class DommelMapper
     /// <param name="connection">The connection to the database. This can either be open or closed.</param>
     /// <param name="pageNumber">The number of the page to fetch, starting at 1.</param>
     /// <param name="pageSize">The page size.</param>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
     /// <param name="buffered">
     /// A value indicating whether the result of the query should be executed directly,
     /// or when the query is materialized (using <c>ToList()</c> for example).
     /// </param>
     /// <param name="transaction">Optional transaction for the command.</param>
     /// <returns>A paged collection of entities of type <typeparamref name="TEntity"/>.</returns>
-    public static IEnumerable<TEntity> GetPaged<TEntity>(this IDbConnection connection, int pageNumber, int pageSize, IDbTransaction? transaction = null, bool buffered = true) where TEntity : class
+    public static IEnumerable<TEntity> GetPaged<TEntity>(this IDbConnection connection, int pageNumber, int pageSize, ITableNameResolver tableNameResolver, IDbTransaction? transaction = null, bool buffered = true) where TEntity : class
     {
-        var sql = BuildPagedQuery(connection, typeof(TEntity), pageNumber, pageSize);
+        var sql = BuildPagedQuery(connection, typeof(TEntity), pageNumber, pageSize, tableNameResolver);
         LogQuery<TEntity>(sql);
         return connection.Query<TEntity>(sql, transaction: transaction, buffered: buffered);
     }
@@ -243,20 +253,21 @@ public static partial class DommelMapper
     /// <param name="connection">The connection to the database. This can either be open or closed.</param>
     /// <param name="pageNumber">The number of the page to fetch, starting at 1.</param>
     /// <param name="pageSize">The page size.</param>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
     /// <param name="transaction">Optional transaction for the command.</param>
     /// <param name="cancellationToken">Optional cancellation token for the command.</param>
     /// <returns>A paged collection of entities of type <typeparamref name="TEntity"/>.</returns>
-    public static Task<IEnumerable<TEntity>> GetPagedAsync<TEntity>(this IDbConnection connection, int pageNumber, int pageSize, IDbTransaction? transaction = null, CancellationToken cancellationToken = default) where TEntity : class
+    public static Task<IEnumerable<TEntity>> GetPagedAsync<TEntity>(this IDbConnection connection, int pageNumber, int pageSize, ITableNameResolver tableNameResolver, IDbTransaction? transaction = null, CancellationToken cancellationToken = default) where TEntity : class
     {
-        var sql = BuildPagedQuery(connection, typeof(TEntity), pageNumber, pageSize);
+        var sql = BuildPagedQuery(connection, typeof(TEntity), pageNumber, pageSize, tableNameResolver);
         LogQuery<TEntity>(sql);
         return connection.QueryAsync<TEntity>(new CommandDefinition(sql, transaction: transaction, cancellationToken: cancellationToken));
     }
 
-    internal static string BuildPagedQuery(IDbConnection connection, Type type, int pageNumber, int pageSize)
+    internal static string BuildPagedQuery(IDbConnection connection, Type type, int pageNumber, int pageSize, ITableNameResolver tableNameResolver)
     {
         // Start with the select query part
-        var sql = BuildGetAllQuery(connection, type);
+        var sql = BuildGetAllQuery(connection, type, tableNameResolver);
 
         // Append the paging part including the order by
         var keyColumns = Resolvers.KeyProperties(type).Select(p => Resolvers.Column(p.Property, connection));

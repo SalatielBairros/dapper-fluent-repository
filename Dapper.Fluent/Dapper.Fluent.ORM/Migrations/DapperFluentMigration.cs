@@ -5,6 +5,7 @@ using Dapper.Fluent.ORM.Contracts;
 using Dapper.Fluent.ORM.Mapping;
 using Dapper.FluentMap;
 using FluentMigrator;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Dapper.Fluent.ORM.Migrations;
 

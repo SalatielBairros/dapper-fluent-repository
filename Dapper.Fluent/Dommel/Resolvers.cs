@@ -97,35 +97,30 @@ public static class Resolvers
     /// </summary>
     /// <param name="type">The <see cref="Type"/> to get the table name for.</param>
     /// <param name="sqlBuilder">The SQL builder instance.</param>
-    /// <param name="tableNameResolver">Table name resolver injection.</param>
+    /// <param name="tableNameResolver">Table name resolver.</param>
     /// <returns>The table name in the database for <paramref name="type"/>.</returns>
     public static string Table(Type type, ISqlBuilder sqlBuilder, ITableNameResolver tableNameResolver)
     {
-        var key = $"{sqlBuilder.GetType()}.{type}";
-        if (!TypeTableNameCache.TryGetValue(key, out var name))
+        var name = "";
+        var tableName = tableNameResolver.ResolveTableName(type);
+
+        if (tableName.Contains('.'))
         {
-            var tableName = tableNameResolver.ResolveTableName(type);
-
-            // Dots are used to define a schema which should be quoted separately
-            if (tableName.Contains('.'))
-            {
-                name = string.Join(".", tableNameResolver
-                    .ResolveTableName(type)
-                    .Split('.')
-                    .Select(x => sqlBuilder.QuoteIdentifier(x)));
-            }
-            else
-            {
-                name = sqlBuilder.QuoteIdentifier(tableName);
-            }
-
-            TypeTableNameCache.TryAdd(key, name);
+            name = string.Join(".", tableNameResolver
+                .ResolveTableName(type)
+                .Split('.')
+                .Select(x => sqlBuilder.QuoteIdentifier(x)));
+        }
+        else
+        {
+            name = sqlBuilder.QuoteIdentifier(tableName);
         }
 
+
         DommelMapper.LogReceived?.Invoke($"Resolved table name '{name}' for '{type}'");
-        return name;
+        return name;       
     }
-    
+
     /// <summary>
     /// Gets the name of the column in the database for the specified type,
     /// using the configured <see cref="IColumnNameResolver"/>.
@@ -159,13 +154,7 @@ public static class Resolvers
         var key = $"{sqlBuilder.GetType()}.{propertyInfo.ReflectedType}.{propertyInfo.Name}.{includeTableName}";
         if (!ColumnNameCache.TryGetValue(key, out var columnName))
         {
-            columnName = sqlBuilder.QuoteIdentifier(DommelMapper.ColumnNameResolver.ResolveColumnName(propertyInfo));
-            if (includeTableName && propertyInfo.ReflectedType?.IsDefined(typeof(CompilerGeneratedAttribute)) == false)
-            {
-                // Include the table name for unambiguity, except for anonymyes types e.g. x => new { x.Id, x.Name }
-                var tableName = Table(propertyInfo.ReflectedType, sqlBuilder);
-                columnName = $"{tableName}.{columnName}";
-            }
+            columnName = sqlBuilder.QuoteIdentifier(DommelMapper.ColumnNameResolver.ResolveColumnName(propertyInfo));            
             ColumnNameCache.TryAdd(key, columnName);
         }
 

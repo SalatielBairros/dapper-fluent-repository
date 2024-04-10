@@ -25,11 +25,7 @@ public static partial class DommelMapper
 
     internal static readonly Dictionary<string, ISqlBuilder> SqlBuilders = new()
     {
-        ["sqlconnection"] = new SqlServerSqlBuilder(),
-        ["sqlceconnection"] = new SqlServerCeSqlBuilder(),
-        ["sqliteconnection"] = new SqliteSqlBuilder(),
-        ["npgsqlconnection"] = new PostgresSqlBuilder(),
-        ["mysqlconnection"] = new MySqlSqlBuilder()
+        ["npgsqlconnection"] = new PostgresSqlBuilder()        
     };
 
     static DommelMapper()
@@ -51,10 +47,8 @@ public static partial class DommelMapper
                 return DefaultTypeMapProvider(type)?.GetMember(columnName)?.Property!;
             });
 
-#if NET6_0_OR_GREATER
         SqlMapper.AddTypeHandler(new DateOnlyTypeHandler());
         SqlMapper.AddTypeHandler(new TimeOnlyTypeHandler());
-#endif
     }
 
     /// <summary>
@@ -133,7 +127,7 @@ public static partial class DommelMapper
     public static ISqlBuilder GetSqlBuilder(IDbConnection connection)
     {
         var connectionTypeName = connection.GetType().Name;
-        var builder = SqlBuilders.TryGetValue(connectionTypeName.ToLower(), out var b) ? b : new SqlServerSqlBuilder();
+        var builder = SqlBuilders.TryGetValue(connectionTypeName.ToLower(), out var b) ? b : new PostgresSqlBuilder();
         LogReceived?.Invoke($"Selected SQL Builder '{builder.GetType().Name}' for connection type '{connectionTypeName}'");
         return builder;
     }

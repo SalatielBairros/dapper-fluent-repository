@@ -32,11 +32,7 @@ public static class DommelJsonMapper
         }
 
         // Add SQL builders with JSON value support
-        DommelMapper.AddSqlBuilder("sqlconnection", new SqlServerSqlBuilder());
-        DommelMapper.AddSqlBuilder("sqlceconnection", new SqlServerCeSqlBuilder());
-        DommelMapper.AddSqlBuilder("sqliteconnection", new SqliteSqlBuilder());
-        DommelMapper.AddSqlBuilder("npgsqlconnection", new PostgresSqlBuilder());
-        DommelMapper.AddSqlBuilder("mysqlconnection", new MySqlSqlBuilder());
+        DommelMapper.AddSqlBuilder("npgsqlconnection", new PostgresSqlBuilder());        
 
         // Add a custom SqlExpression<T> factory with JSON support
         DommelMapper.SqlExpressionFactory = (type, sqlBuilder) =>

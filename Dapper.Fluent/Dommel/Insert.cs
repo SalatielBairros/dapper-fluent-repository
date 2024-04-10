@@ -17,11 +17,12 @@ public static partial class DommelMapper
     /// <param name="connection">The connection to the database. This can either be open or closed.</param>
     /// <param name="entity">The entity to be inserted.</param>
     /// <param name="transaction">Optional transaction for the command.</param>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
     /// <returns>The ID of the inserted entity.</returns>
-    public static object Insert<TEntity>(this IDbConnection connection, TEntity entity, IDbTransaction? transaction = null)
+    public static object Insert<TEntity>(this IDbConnection connection, TEntity entity, ITableNameResolver tableNameResolver, IDbTransaction? transaction = null)
         where TEntity : class
     {
-        var sql = BuildInsertQuery(GetSqlBuilder(connection), typeof(TEntity));
+        var sql = BuildInsertQuery(GetSqlBuilder(connection), typeof(TEntity), tableNameResolver);
         LogQuery<TEntity>(sql);
         return connection.ExecuteScalar(sql, entity, transaction)!;
     }
@@ -33,12 +34,13 @@ public static partial class DommelMapper
     /// <param name="connection">The connection to the database. This can either be open or closed.</param>
     /// <param name="entity">The entity to be inserted.</param>
     /// <param name="transaction">Optional transaction for the command.</param>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
     /// <param name="cancellationToken">Optional cancellation token for the command.</param>
     /// <returns>The ID of the inserted entity.</returns>
-    public static Task<object> InsertAsync<TEntity>(this IDbConnection connection, TEntity entity, IDbTransaction? transaction = null, CancellationToken cancellationToken = default)
+    public static Task<object> InsertAsync<TEntity>(this IDbConnection connection, TEntity entity, ITableNameResolver tableNameResolver, IDbTransaction? transaction = null, CancellationToken cancellationToken = default)
         where TEntity : class
     {
-        var sql = BuildInsertQuery(GetSqlBuilder(connection), typeof(TEntity));
+        var sql = BuildInsertQuery(GetSqlBuilder(connection), typeof(TEntity), tableNameResolver);
         LogQuery<TEntity>(sql);
         return connection.ExecuteScalarAsync(new CommandDefinition(sql, entity, transaction: transaction, cancellationToken: cancellationToken))!;
     }
@@ -49,11 +51,12 @@ public static partial class DommelMapper
     /// <typeparam name="TEntity">The type of the entity.</typeparam>
     /// <param name="connection">The connection to the database. This can either be open or closed.</param>
     /// <param name="entities">The entities to be inserted.</param>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
     /// <param name="transaction">Optional transaction for the command.</param>
-    public static void InsertAll<TEntity>(this IDbConnection connection, IEnumerable<TEntity> entities, IDbTransaction? transaction = null)
+    public static void InsertAll<TEntity>(this IDbConnection connection, IEnumerable<TEntity> entities, ITableNameResolver tableNameResolver, IDbTransaction? transaction = null)
         where TEntity : class
     {
-        var sql = BuildInsertQuery(GetSqlBuilder(connection), typeof(TEntity));
+        var sql = BuildInsertQuery(GetSqlBuilder(connection), typeof(TEntity), tableNameResolver);
         LogQuery<TEntity>(sql);
         connection.Execute(sql, entities, transaction);
     }
@@ -64,22 +67,23 @@ public static partial class DommelMapper
     /// <typeparam name="TEntity">The type of the entity.</typeparam>
     /// <param name="connection">The connection to the database. This can either be open or closed.</param>
     /// <param name="entities">The entities to be inserted.</param>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
     /// <param name="transaction">Optional transaction for the command.</param>
     /// <param name="cancellationToken">Optional cancellation token for the command.</param>
-    public static Task InsertAllAsync<TEntity>(this IDbConnection connection, IEnumerable<TEntity> entities, IDbTransaction? transaction = null, CancellationToken cancellationToken = default)
+    public static Task InsertAllAsync<TEntity>(this IDbConnection connection, IEnumerable<TEntity> entities, ITableNameResolver tableNameResolver, IDbTransaction? transaction = null, CancellationToken cancellationToken = default)
         where TEntity : class
     {
-        var sql = BuildInsertQuery(GetSqlBuilder(connection), typeof(TEntity));
+        var sql = BuildInsertQuery(GetSqlBuilder(connection), typeof(TEntity), tableNameResolver);
         LogQuery<TEntity>(sql);
         return connection.ExecuteAsync(new CommandDefinition(sql, entities, transaction: transaction, cancellationToken: cancellationToken));
     }
 
-    internal static string BuildInsertQuery(ISqlBuilder sqlBuilder, Type type)
+    public static string BuildInsertQuery(ISqlBuilder sqlBuilder, Type type, ITableNameResolver tableNameResolver, bool returnKeys = true)
     {
-        var cacheKey = new QueryCacheKey(QueryCacheType.Insert, sqlBuilder, type);
+        var tableName = Resolvers.Table(type, sqlBuilder, tableNameResolver);
+        var cacheKey = new QueryCacheKey(QueryCacheType.Insert, sqlBuilder, type, tableName);
         if (!QueryCache.TryGetValue(cacheKey, out var sql))
         {
-            var tableName = Resolvers.Table(type, sqlBuilder);
 
             // Use all non-key and non-generated properties for inserts
             var keyProperties = Resolvers.KeyProperties(type);
@@ -91,7 +95,7 @@ public static partial class DommelMapper
             var columnNames = typeProperties.Select(p => Resolvers.Column(p, sqlBuilder, false)).ToArray();
             var paramNames = typeProperties.Select(p => sqlBuilder.PrefixParameter(p.Name)).ToArray();
 
-            sql = sqlBuilder.BuildInsert(type, tableName, columnNames, paramNames);
+            sql = sqlBuilder.BuildInsert(type, tableName, columnNames, paramNames, returnKeys);
 
             QueryCache.TryAdd(cacheKey, sql);
         }

@@ -18,9 +18,9 @@ public static partial class DommelMapper
     /// <param name="entity">The entity in the database.</param>
     /// <param name="transaction">Optional transaction for the command.</param>
     /// <returns>A value indicating whether the update operation succeeded.</returns>
-    public static bool Update<TEntity>(this IDbConnection connection, TEntity entity, IDbTransaction? transaction = null)
+    public static bool Update<TEntity>(this IDbConnection connection, TEntity entity, ITableNameResolver tableNameResolver, IDbTransaction? transaction = null)
     {
-        var sql = BuildUpdateQuery(GetSqlBuilder(connection), typeof(TEntity));
+        var sql = BuildUpdateQuery(GetSqlBuilder(connection), typeof(TEntity), tableNameResolver);
         LogQuery<TEntity>(sql);
         return connection.Execute(sql, entity, transaction) > 0;
     }
@@ -35,19 +35,19 @@ public static partial class DommelMapper
     /// <param name="transaction">Optional transaction for the command.</param>
     /// <param name="cancellationToken">Optional cancellation token for the command.</param>
     /// <returns>A value indicating whether the update operation succeeded.</returns>
-    public static async Task<bool> UpdateAsync<TEntity>(this IDbConnection connection, TEntity entity, IDbTransaction? transaction = null, CancellationToken cancellationToken = default)
+    public static async Task<bool> UpdateAsync<TEntity>(this IDbConnection connection, TEntity entity, ITableNameResolver tableNameResolver, IDbTransaction? transaction = null, CancellationToken cancellationToken = default)
     {
-        var sql = BuildUpdateQuery(GetSqlBuilder(connection), typeof(TEntity));
+        var sql = BuildUpdateQuery(GetSqlBuilder(connection), typeof(TEntity), tableNameResolver);
         LogQuery<TEntity>(sql);
         return await connection.ExecuteAsync(new CommandDefinition(sql, entity, transaction: transaction, cancellationToken: cancellationToken)) > 0;
     }
 
-    internal static string BuildUpdateQuery(ISqlBuilder sqlBuilder, Type type)
+    internal static string BuildUpdateQuery(ISqlBuilder sqlBuilder, Type type, ITableNameResolver tableNameResolver)
     {
-        var cacheKey = new QueryCacheKey(QueryCacheType.Update, sqlBuilder, type);
+        var tableName = Resolvers.Table(type, sqlBuilder, tableNameResolver);
+        var cacheKey = new QueryCacheKey(QueryCacheType.Update, sqlBuilder, type, tableName);
         if (!QueryCache.TryGetValue(cacheKey, out var sql))
         {
-            var tableName = Resolvers.Table(type, sqlBuilder);
 
             // Use all non-key and non-generated properties for updates
             var keyProperties = Resolvers.KeyProperties(type);
@@ -56,8 +56,8 @@ public static partial class DommelMapper
                 .Select(x => x.Property)
                 .Except(keyProperties.Where(p => p.IsGenerated).Select(p => p.Property));
 
-            var columnNames = typeProperties.Select(p => $"{Resolvers.Column(p, sqlBuilder, false)} = {sqlBuilder.PrefixParameter(p.Name)}").ToArray();
-            var whereClauses = keyProperties.Select(p => $"{Resolvers.Column(p.Property, sqlBuilder, false)} = {sqlBuilder.PrefixParameter(p.Property.Name)}");
+            var columnNames = typeProperties.Select(p => $"{Resolvers.Column(p, sqlBuilder)} = {sqlBuilder.PrefixParameter(p.Name)}").ToArray();
+            var whereClauses = keyProperties.Select(p => $"{Resolvers.Column(p.Property, sqlBuilder)} = {sqlBuilder.PrefixParameter(p.Property.Name)}");
             sql = $"update {tableName} set {string.Join(", ", columnNames)} where {string.Join(" and ", whereClauses)}";
 
             QueryCache.TryAdd(cacheKey, sql);

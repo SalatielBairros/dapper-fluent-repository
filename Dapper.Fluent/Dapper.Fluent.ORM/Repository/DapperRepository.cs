@@ -31,9 +31,9 @@ public abstract class DapperRepository<TEntity> : IDapperRepository<TEntity> whe
 
     public Task<IEnumerable<TEntity>> AllAsync() => Connection.UseAsync(db => db.GetAllAsync<TEntity>(TableNameResolver));
 
-    public IEnumerable<TEntity> AllPaged(int pageNumber, int pageSize) => Connection.Use(db => db.GetPaged<TEntity>(TableNameResolver, pageNumber, pageSize));
+    public IEnumerable<TEntity> AllPaged(int pageNumber, int pageSize) => Connection.Use(db => db.GetPaged<TEntity>(pageNumber, pageSize, TableNameResolver));
 
-    public Task<IEnumerable<TEntity>> AllPagedAsync(int pageNumber, int pageSize) => Connection.UseAsync(db => db.GetPagedAsync<TEntity>(TableNameResolver, pageNumber, pageSize));
+    public Task<IEnumerable<TEntity>> AllPagedAsync(int pageNumber, int pageSize) => Connection.UseAsync(db => db.GetPagedAsync<TEntity>(pageNumber, pageSize, TableNameResolver));
 
     #endregion
 
@@ -60,10 +60,10 @@ public abstract class DapperRepository<TEntity> : IDapperRepository<TEntity> whe
     public async Task<IEnumerable<TEntity>> GetDataAsync(Expression<Func<TEntity, bool>> filter) => await Task.Run(() => Connection.Use(db => db.Select(filter, TableNameResolver)));
 
     public IEnumerable<TEntity> GetPagedData(int pageNumber, int pageSize, Expression<Func<TEntity, bool>> filter, string orderBy = null)
-        => Connection.Use(db => db.SelectPaged(filter, TableNameResolver, pageNumber, pageSize, null, true, orderBy));
+        => Connection.Use(db => db.SelectPaged(filter, pageNumber, pageSize, TableNameResolver, null, true, orderBy));
 
     public Task<IEnumerable<TEntity>> GetPagedDataAsync(int pageNumber, int pageSize, Expression<Func<TEntity, bool>> filter, string orderBy = null)
-        => Connection.UseAsync(db => db.SelectPagedAsync(filter, TableNameResolver, pageNumber, pageSize, null, default, orderBy));
+        => Connection.UseAsync(db => db.SelectPagedAsync(filter, pageNumber, pageSize, TableNameResolver, null, default, orderBy));
 
     public Task<TReturn> GetValueAsync<TReturn>(string sql, object parameters)
         => Connection.UseAsync(db => db.ExecuteScalarAsync<TReturn>(sql, parameters));

@@ -3,28 +3,14 @@ using System.Reflection;
 
 namespace Dommel;
 
-internal enum QueryCacheType
-{
-    Get,
-    GetByMultipleIds,
-    GetAll,
-    Project,
-    ProjectAll,
-    Count,
-    Insert,
-    Update,
-    Delete,
-    DeleteAll,
-    Any,
-}
-
 internal readonly struct QueryCacheKey : IEquatable<QueryCacheKey>
 {
-    public QueryCacheKey(QueryCacheType cacheType, ISqlBuilder sqlBuilder, MemberInfo memberInfo)
+    public QueryCacheKey(QueryCacheType cacheType, ISqlBuilder sqlBuilder, MemberInfo memberInfo, string tableName)
     {
         SqlBuilderType = sqlBuilder.GetType();
         CacheType = cacheType;
         MemberInfo = memberInfo;
+        TableName = tableName;
     }
 
     public QueryCacheType CacheType { get; }
@@ -33,7 +19,13 @@ internal readonly struct QueryCacheKey : IEquatable<QueryCacheKey>
 
     public MemberInfo MemberInfo { get; }
 
-    public readonly bool Equals(QueryCacheKey other) => CacheType == other.CacheType && SqlBuilderType == other.SqlBuilderType && MemberInfo == other.MemberInfo;
+    public string TableName { get; }
+
+    public bool Equals(QueryCacheKey other) =>
+            CacheType == other.CacheType &&
+            SqlBuilderType == other.SqlBuilderType &&
+            MemberInfo == other.MemberInfo &&
+            TableName == other.TableName;
 
     public override bool Equals(object? obj) => obj is QueryCacheKey key && Equals(key);
 

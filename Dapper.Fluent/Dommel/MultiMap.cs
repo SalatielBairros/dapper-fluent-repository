@@ -17,116 +17,19 @@ public static partial class DommelMapper
     /// <typeparam name="T1">The first type parameter. This is the source entity.</typeparam>
     /// <typeparam name="T2">The second type parameter.</typeparam>
     /// <typeparam name="TReturn">The return type parameter.</typeparam>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
     /// <param name="connection">The connection to the database. This can either be open or closed.</param>
     /// <param name="id">The id of the entity in the database.</param>
     /// <param name="map">The mapping to perform on the entities in the result set.</param>
     /// <param name="transaction">Optional transaction for the command.</param>
     /// <returns>The entity with the corresponding id joined with the specified types.</returns>
-    public static TReturn? Get<T1, T2, TReturn>(this IDbConnection connection, object id, Func<T1, T2, TReturn> map, IDbTransaction? transaction = null) where TReturn : class
-        => MultiMap<T1, T2, DontMap, DontMap, DontMap, DontMap, DontMap, TReturn>(connection, map, id, transaction).FirstOrDefault();
-
-    /// <summary>
-    /// Retrieves the entity of type <typeparamref name="TReturn"/> with the specified id
-    /// joined with the types specified as type parameters.
-    /// </summary>
-    /// <typeparam name="T1">The first type parameter. This is the source entity.</typeparam>
-    /// <typeparam name="T2">The second type parameter.</typeparam>
-    /// <typeparam name="TReturn">The return type parameter.</typeparam>
-    /// <param name="connection">The connection to the database. This can either be open or closed.</param>
-    /// <param name="id">The id of the entity in the database.</param>
-    /// <param name="map">The mapping to perform on the entities in the result set.</param>
-    /// <param name="transaction">Optional transaction for the command.</param>
-    /// <param name="cancellationToken">Optional cancellation token for the command.</param>
-    /// <returns>The entity with the corresponding id joined with the specified types.</returns>
-    public static async Task<TReturn?> GetAsync<T1, T2, TReturn>(this IDbConnection connection, object id, Func<T1, T2, TReturn> map, IDbTransaction? transaction = null, CancellationToken cancellationToken = default) where TReturn : class
-        => (await MultiMapAsync<T1, T2, DontMap, DontMap, DontMap, DontMap, DontMap, TReturn>(connection, map, id, transaction, cancellationToken: cancellationToken)).FirstOrDefault();
-
-    /// <summary>
-    /// Retrieves the entity of type <typeparamref name="TReturn"/> with the specified id
-    /// joined with the types specified as type parameters.
-    /// </summary>
-    /// <typeparam name="T1">The first type parameter. This is the source entity.</typeparam>
-    /// <typeparam name="T2">The second type parameter.</typeparam>
-    /// <typeparam name="T3">The third type parameter.</typeparam>
-    /// <typeparam name="TReturn">The return type parameter.</typeparam>
-    /// <param name="connection">The connection to the database. This can either be open or closed.</param>
-    /// <param name="id">The id of the entity in the database.</param>
-    /// <param name="map">The mapping to perform on the entities in the result set.</param>
-    /// <param name="transaction">Optional transaction for the command.</param>
-    /// <returns>The entity with the corresponding id joined with the specified types.</returns>
-    public static TReturn? Get<T1, T2, T3, TReturn>(this IDbConnection connection, object id, Func<T1, T2, T3, TReturn> map, IDbTransaction? transaction = null) where TReturn : class
-        => MultiMap<T1, T2, T3, DontMap, DontMap, DontMap, DontMap, TReturn>(connection, map, id, transaction).FirstOrDefault();
-
-    /// <summary>
-    /// Retrieves the entity of type <typeparamref name="TReturn"/> with the specified id
-    /// joined with the types specified as type parameters.
-    /// </summary>
-    /// <typeparam name="T1">The first type parameter. This is the source entity.</typeparam>
-    /// <typeparam name="T2">The second type parameter.</typeparam>
-    /// <typeparam name="T3">The third type parameter.</typeparam>
-    /// <typeparam name="TReturn">The return type parameter.</typeparam>
-    /// <param name="connection">The connection to the database. This can either be open or closed.</param>
-    /// <param name="id">The id of the entity in the database.</param>
-    /// <param name="map">The mapping to perform on the entities in the result set.</param>
-    /// <param name="transaction">Optional transaction for the command.</param>
-    /// <param name="cancellationToken">Optional cancellation token for the command.</param>
-    /// <returns>The entity with the corresponding id joined with the specified types.</returns>
-    public static async Task<TReturn?> GetAsync<T1, T2, T3, TReturn>(this IDbConnection connection, object id, Func<T1, T2, T3, TReturn> map, IDbTransaction? transaction = null, CancellationToken cancellationToken = default) where TReturn : class
-        => (await MultiMapAsync<T1, T2, T3, DontMap, DontMap, DontMap, DontMap, TReturn>(connection, map, id, transaction, cancellationToken: cancellationToken)).FirstOrDefault();
-
-    /// <summary>
-    /// Retrieves the entity of type <typeparamref name="TReturn"/> with the specified id
-    /// joined with the types specified as type parameters.
-    /// </summary>
-    /// <typeparam name="T1">The first type parameter. This is the source entity.</typeparam>
-    /// <typeparam name="T2">The second type parameter.</typeparam>
-    /// <typeparam name="T3">The third type parameter.</typeparam>
-    /// <typeparam name="T4">The fourth type parameter.</typeparam>
-    /// <typeparam name="TReturn">The return type parameter.</typeparam>
-    /// <param name="connection">The connection to the database. This can either be open or closed.</param>
-    /// <param name="id">The id of the entity in the database.</param>
-    /// <param name="map">The mapping to perform on the entities in the result set.</param>
-    /// <param name="transaction">Optional transaction for the command.</param>
-    /// <returns>The entity with the corresponding id joined with the specified types.</returns>
-    public static TReturn? Get<T1, T2, T3, T4, TReturn>(this IDbConnection connection, object id, Func<T1, T2, T3, T4, TReturn> map, IDbTransaction? transaction = null) where TReturn : class
-        => MultiMap<T1, T2, T3, T4, DontMap, DontMap, DontMap, TReturn>(connection, map, id, transaction).FirstOrDefault();
-
-    /// <summary>
-    /// Retrieves the entity of type <typeparamref name="TReturn"/> with the specified id
-    /// joined with the types specified as type parameters.
-    /// </summary>
-    /// <typeparam name="T1">The first type parameter. This is the source entity.</typeparam>
-    /// <typeparam name="T2">The second type parameter.</typeparam>
-    /// <typeparam name="T3">The third type parameter.</typeparam>
-    /// <typeparam name="T4">The fourth type parameter.</typeparam>
-    /// <typeparam name="TReturn">The return type parameter.</typeparam>
-    /// <param name="connection">The connection to the database. This can either be open or closed.</param>
-    /// <param name="id">The id of the entity in the database.</param>
-    /// <param name="map">The mapping to perform on the entities in the result set.</param>
-    /// <param name="transaction">Optional transaction for the command.</param>
-    /// <param name="cancellationToken">Optional cancellation token for the command.</param>
-    /// <returns>The entity with the corresponding id joined with the specified types.</returns>
-    public static async Task<TReturn?> GetAsync<T1, T2, T3, T4, TReturn>(this IDbConnection connection, object id, Func<T1, T2, T3, T4, TReturn> map, IDbTransaction? transaction = null, CancellationToken cancellationToken = default) where TReturn : class
-        => (await MultiMapAsync<T1, T2, T3, T4, DontMap, DontMap, DontMap, TReturn>(connection, map, id, transaction, cancellationToken: cancellationToken)).FirstOrDefault();
-
-    /// <summary>
-    /// Retrieves the entity of type <typeparamref name="TReturn"/> with the specified id
-    /// joined with the types specified as type parameters.
-    /// </summary>
-    /// <typeparam name="T1">The first type parameter. This is the source entity.</typeparam>
-    /// <typeparam name="T2">The second type parameter.</typeparam>
-    /// <typeparam name="T3">The third type parameter.</typeparam>
-    /// <typeparam name="T4">The fourth type parameter.</typeparam>
-    /// <typeparam name="T5">The fifth type parameter.</typeparam>
-    /// <typeparam name="TReturn">The return type parameter.</typeparam>
-    /// <param name="connection">The connection to the database. This can either be open or closed.</param>
-    /// <param name="id">The id of the entity in the database.</param>
-    /// <param name="map">The mapping to perform on the entities in the result set.</param>
-    /// <param name="transaction">Optional transaction for the command.</param>
-    /// <returns>The entity with the corresponding id joined with the specified types.</returns>
-    public static TReturn? Get<T1, T2, T3, T4, T5, TReturn>(this IDbConnection connection, object id, Func<T1, T2, T3, T4, T5, TReturn> map,
+    public static TReturn? Get<T1, T2, TReturn>(
+        this IDbConnection connection,
+        object id,
+        Func<T1, T2, TReturn> map, 
+        ITableNameResolver tableNameResolver,
         IDbTransaction? transaction = null) where TReturn : class
-        => MultiMap<T1, T2, T3, T4, T5, DontMap, DontMap, TReturn>(connection, map, id, transaction).FirstOrDefault();
+        => MultiMap<T1, T2, DontMap, DontMap, DontMap, DontMap, DontMap, TReturn>(connection, map, tableNameResolver, id, transaction).FirstOrDefault();
 
     /// <summary>
     /// Retrieves the entity of type <typeparamref name="TReturn"/> with the specified id
@@ -134,18 +37,22 @@ public static partial class DommelMapper
     /// </summary>
     /// <typeparam name="T1">The first type parameter. This is the source entity.</typeparam>
     /// <typeparam name="T2">The second type parameter.</typeparam>
-    /// <typeparam name="T3">The third type parameter.</typeparam>
-    /// <typeparam name="T4">The fourth type parameter.</typeparam>
-    /// <typeparam name="T5">The fifth type parameter.</typeparam>
     /// <typeparam name="TReturn">The return type parameter.</typeparam>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
     /// <param name="connection">The connection to the database. This can either be open or closed.</param>
     /// <param name="id">The id of the entity in the database.</param>
     /// <param name="map">The mapping to perform on the entities in the result set.</param>
     /// <param name="transaction">Optional transaction for the command.</param>
     /// <param name="cancellationToken">Optional cancellation token for the command.</param>
     /// <returns>The entity with the corresponding id joined with the specified types.</returns>
-    public static async Task<TReturn?> GetAsync<T1, T2, T3, T4, T5, TReturn>(this IDbConnection connection, object id, Func<T1, T2, T3, T4, T5, TReturn> map, IDbTransaction? transaction = null, CancellationToken cancellationToken = default) where TReturn : class
-        => (await MultiMapAsync<T1, T2, T3, T4, T5, DontMap, DontMap, TReturn>(connection, map, id, transaction, cancellationToken: cancellationToken)).FirstOrDefault();
+    public static async Task<TReturn?> GetAsync<T1, T2, TReturn>(
+        this IDbConnection connection, 
+        object id,
+        Func<T1, T2, TReturn> map,
+        ITableNameResolver tableNameResolver,
+        IDbTransaction? transaction = null,
+        CancellationToken cancellationToken = default) where TReturn : class
+        => (await MultiMapAsync<T1, T2, DontMap, DontMap, DontMap, DontMap, DontMap, TReturn>(connection, map, tableNameResolver, id, transaction, cancellationToken: cancellationToken)).FirstOrDefault();
 
     /// <summary>
     /// Retrieves the entity of type <typeparamref name="TReturn"/> with the specified id
@@ -154,17 +61,143 @@ public static partial class DommelMapper
     /// <typeparam name="T1">The first type parameter. This is the source entity.</typeparam>
     /// <typeparam name="T2">The second type parameter.</typeparam>
     /// <typeparam name="T3">The third type parameter.</typeparam>
-    /// <typeparam name="T4">The fourth type parameter.</typeparam>
-    /// <typeparam name="T5">The fifth type parameter.</typeparam>
-    /// <typeparam name="T6">The sixth type parameter.</typeparam>
     /// <typeparam name="TReturn">The return type parameter.</typeparam>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
     /// <param name="connection">The connection to the database. This can either be open or closed.</param>
     /// <param name="id">The id of the entity in the database.</param>
     /// <param name="map">The mapping to perform on the entities in the result set.</param>
     /// <param name="transaction">Optional transaction for the command.</param>
     /// <returns>The entity with the corresponding id joined with the specified types.</returns>
-    public static TReturn? Get<T1, T2, T3, T4, T5, T6, TReturn>(this IDbConnection connection, object id, Func<T1, T2, T3, T4, T5, T6, TReturn> map, IDbTransaction? transaction = null) where TReturn : class
-        => MultiMap<T1, T2, T3, T4, T5, T6, DontMap, TReturn>(connection, map, id, transaction).FirstOrDefault();
+    public static TReturn? Get<T1, T2, T3, TReturn>(
+        this IDbConnection connection, 
+        object id, 
+        Func<T1, T2, T3, TReturn> map, 
+        ITableNameResolver tableNameResolver, 
+        IDbTransaction? transaction = null) where TReturn : class
+        => MultiMap<T1, T2, T3, DontMap, DontMap, DontMap, DontMap, TReturn>(connection, map, tableNameResolver, id, transaction).FirstOrDefault();
+
+    /// <summary>
+    /// Retrieves the entity of type <typeparamref name="TReturn"/> with the specified id
+    /// joined with the types specified as type parameters.
+    /// </summary>
+    /// <typeparam name="T1">The first type parameter. This is the source entity.</typeparam>
+    /// <typeparam name="T2">The second type parameter.</typeparam>
+    /// <typeparam name="T3">The third type parameter.</typeparam>
+    /// <typeparam name="TReturn">The return type parameter.</typeparam>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
+    /// <param name="connection">The connection to the database. This can either be open or closed.</param>
+    /// <param name="id">The id of the entity in the database.</param>
+    /// <param name="map">The mapping to perform on the entities in the result set.</param>
+    /// <param name="transaction">Optional transaction for the command.</param>
+    /// <param name="cancellationToken">Optional cancellation token for the command.</param>
+    /// <returns>The entity with the corresponding id joined with the specified types.</returns>
+    public static async Task<TReturn?> GetAsync<T1, T2, T3, TReturn>(
+        this IDbConnection connection,
+        object id, Func<T1, T2, T3, TReturn> map, 
+        ITableNameResolver tableNameResolver, 
+        IDbTransaction? transaction = null,
+        CancellationToken cancellationToken = default) where TReturn : class
+        => (await MultiMapAsync<T1, T2, T3, DontMap, DontMap, DontMap, DontMap, TReturn>(
+            connection, map, tableNameResolver, id, transaction, cancellationToken: cancellationToken)).FirstOrDefault();
+
+    /// <summary>
+    /// Retrieves the entity of type <typeparamref name="TReturn"/> with the specified id
+    /// joined with the types specified as type parameters.
+    /// </summary>
+    /// <typeparam name="T1">The first type parameter. This is the source entity.</typeparam>
+    /// <typeparam name="T2">The second type parameter.</typeparam>
+    /// <typeparam name="T3">The third type parameter.</typeparam>
+    /// <typeparam name="T4">The fourth type parameter.</typeparam>
+    /// <typeparam name="TReturn">The return type parameter.</typeparam>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
+    /// <param name="connection">The connection to the database. This can either be open or closed.</param>
+    /// <param name="id">The id of the entity in the database.</param>
+    /// <param name="map">The mapping to perform on the entities in the result set.</param>
+    /// <param name="transaction">Optional transaction for the command.</param>
+    /// <returns>The entity with the corresponding id joined with the specified types.</returns>
+    public static TReturn? Get<T1, T2, T3, T4, TReturn>(
+        this IDbConnection connection, 
+        object id, 
+        Func<T1, T2, T3, T4, TReturn> map, 
+        ITableNameResolver tableNameResolver, 
+        IDbTransaction? transaction = null) where TReturn : class
+        => MultiMap<T1, T2, T3, T4, DontMap, DontMap, DontMap, TReturn>(connection, map, tableNameResolver, id, transaction).FirstOrDefault();
+
+    /// <summary>
+    /// Retrieves the entity of type <typeparamref name="TReturn"/> with the specified id
+    /// joined with the types specified as type parameters.
+    /// </summary>
+    /// <typeparam name="T1">The first type parameter. This is the source entity.</typeparam>
+    /// <typeparam name="T2">The second type parameter.</typeparam>
+    /// <typeparam name="T3">The third type parameter.</typeparam>
+    /// <typeparam name="T4">The fourth type parameter.</typeparam>
+    /// <typeparam name="TReturn">The return type parameter.</typeparam>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
+    /// <param name="connection">The connection to the database. This can either be open or closed.</param>
+    /// <param name="id">The id of the entity in the database.</param>
+    /// <param name="map">The mapping to perform on the entities in the result set.</param>
+    /// <param name="transaction">Optional transaction for the command.</param>
+    /// <param name="cancellationToken">Optional cancellation token for the command.</param>
+    /// <returns>The entity with the corresponding id joined with the specified types.</returns>
+    public static async Task<TReturn?> GetAsync<T1, T2, T3, T4, TReturn>(
+        this IDbConnection connection, 
+        object id, 
+        Func<T1, T2, T3, T4, TReturn> map, 
+        ITableNameResolver tableNameResolver,
+        IDbTransaction? transaction = null, 
+        CancellationToken cancellationToken = default) where TReturn : class
+        => (await MultiMapAsync<T1, T2, T3, T4, DontMap, DontMap, DontMap, TReturn>(connection, map, tableNameResolver, id, transaction, cancellationToken: cancellationToken)).FirstOrDefault();
+
+    /// <summary>
+    /// Retrieves the entity of type <typeparamref name="TReturn"/> with the specified id
+    /// joined with the types specified as type parameters.
+    /// </summary>
+    /// <typeparam name="T1">The first type parameter. This is the source entity.</typeparam>
+    /// <typeparam name="T2">The second type parameter.</typeparam>
+    /// <typeparam name="T3">The third type parameter.</typeparam>
+    /// <typeparam name="T4">The fourth type parameter.</typeparam>
+    /// <typeparam name="T5">The fifth type parameter.</typeparam>
+    /// <typeparam name="TReturn">The return type parameter.</typeparam>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
+    /// <param name="connection">The connection to the database. This can either be open or closed.</param>
+    /// <param name="id">The id of the entity in the database.</param>
+    /// <param name="map">The mapping to perform on the entities in the result set.</param>
+    /// <param name="transaction">Optional transaction for the command.</param>
+    /// <returns>The entity with the corresponding id joined with the specified types.</returns>
+    public static TReturn? Get<T1, T2, T3, T4, T5, TReturn>(
+        this IDbConnection connection, 
+        object id, 
+        Func<T1, T2, T3, T4, T5, TReturn> map,
+        ITableNameResolver tableNameResolver,
+        IDbTransaction? transaction = null) where TReturn : class
+        => MultiMap<T1, T2, T3, T4, T5, DontMap, DontMap, TReturn>(connection, map, tableNameResolver, id, transaction).FirstOrDefault();
+
+    /// <summary>
+    /// Retrieves the entity of type <typeparamref name="TReturn"/> with the specified id
+    /// joined with the types specified as type parameters.
+    /// </summary>
+    /// <typeparam name="T1">The first type parameter. This is the source entity.</typeparam>
+    /// <typeparam name="T2">The second type parameter.</typeparam>
+    /// <typeparam name="T3">The third type parameter.</typeparam>
+    /// <typeparam name="T4">The fourth type parameter.</typeparam>
+    /// <typeparam name="T5">The fifth type parameter.</typeparam>
+    /// <typeparam name="TReturn">The return type parameter.</typeparam>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
+    /// <param name="connection">The connection to the database. This can either be open or closed.</param>
+    /// <param name="id">The id of the entity in the database.</param>
+    /// <param name="map">The mapping to perform on the entities in the result set.</param>
+    /// <param name="transaction">Optional transaction for the command.</param>
+    /// <param name="cancellationToken">Optional cancellation token for the command.</param>
+    /// <returns>The entity with the corresponding id joined with the specified types.</returns>
+    public static async Task<TReturn?> GetAsync<T1, T2, T3, T4, T5, TReturn>(
+        this IDbConnection connection, 
+        object id, 
+        Func<T1, T2, T3, T4, T5, TReturn> map, 
+        ITableNameResolver tableNameResolver, 
+        IDbTransaction? transaction = null, 
+        CancellationToken cancellationToken = default) where TReturn : class
+        => (await MultiMapAsync<T1, T2, T3, T4, T5, DontMap, DontMap, TReturn>(
+            connection, map, tableNameResolver, id, transaction, cancellationToken: cancellationToken)).FirstOrDefault();
 
     /// <summary>
     /// Retrieves the entity of type <typeparamref name="TReturn"/> with the specified id
@@ -177,6 +210,32 @@ public static partial class DommelMapper
     /// <typeparam name="T5">The fifth type parameter.</typeparam>
     /// <typeparam name="T6">The sixth type parameter.</typeparam>
     /// <typeparam name="TReturn">The return type parameter.</typeparam>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
+    /// <param name="connection">The connection to the database. This can either be open or closed.</param>
+    /// <param name="id">The id of the entity in the database.</param>
+    /// <param name="map">The mapping to perform on the entities in the result set.</param>
+    /// <param name="transaction">Optional transaction for the command.</param>
+    /// <returns>The entity with the corresponding id joined with the specified types.</returns>
+    public static TReturn? Get<T1, T2, T3, T4, T5, T6, TReturn>(
+        this IDbConnection connection, 
+        object id, 
+        Func<T1, T2, T3, T4, T5, T6, TReturn> map, 
+        ITableNameResolver tableNameResolver, 
+        IDbTransaction? transaction = null) where TReturn : class
+        => MultiMap<T1, T2, T3, T4, T5, T6, DontMap, TReturn>(connection, map, tableNameResolver, id, transaction).FirstOrDefault();
+
+    /// <summary>
+    /// Retrieves the entity of type <typeparamref name="TReturn"/> with the specified id
+    /// joined with the types specified as type parameters.
+    /// </summary>
+    /// <typeparam name="T1">The first type parameter. This is the source entity.</typeparam>
+    /// <typeparam name="T2">The second type parameter.</typeparam>
+    /// <typeparam name="T3">The third type parameter.</typeparam>
+    /// <typeparam name="T4">The fourth type parameter.</typeparam>
+    /// <typeparam name="T5">The fifth type parameter.</typeparam>
+    /// <typeparam name="T6">The sixth type parameter.</typeparam>
+    /// <typeparam name="TReturn">The return type parameter.</typeparam>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
     /// <param name="connection">The connection to the database. This can either be open or closed.</param>
     /// <param name="id">The id of the entity in the database.</param>
     /// <param name="map">The mapping to perform on the entities in the result set.</param>
@@ -187,8 +246,11 @@ public static partial class DommelMapper
         this IDbConnection connection,
         object id,
         Func<T1, T2, T3, T4, T5, T6, TReturn> map,
+        ITableNameResolver tableNameResolver,
         IDbTransaction? transaction = null,
-        CancellationToken cancellationToken = default) => (await MultiMapAsync<T1, T2, T3, T4, T5, T6, DontMap, TReturn>(connection, map, id, transaction, cancellationToken: cancellationToken)).FirstOrDefault();
+        CancellationToken cancellationToken = default) 
+        => (await MultiMapAsync<T1, T2, T3, T4, T5, T6, DontMap, TReturn>(
+            connection, map, tableNameResolver, id, transaction, cancellationToken: cancellationToken)).FirstOrDefault();
 
     /// <summary>
     /// Retrieves the entity of type <typeparamref name="TReturn"/> with the specified id
@@ -202,13 +264,19 @@ public static partial class DommelMapper
     /// <typeparam name="T6">The sixth type parameter.</typeparam>
     /// <typeparam name="T7">The seventh type parameter.</typeparam>
     /// <typeparam name="TReturn">The return type parameter.</typeparam>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
     /// <param name="connection">The connection to the database. This can either be open or closed.</param>
     /// <param name="id">The id of the entity in the database.</param>
     /// <param name="map">The mapping to perform on the entities in the result set.</param>
     /// <param name="transaction">Optional transaction for the command.</param>
     /// <returns>The entity with the corresponding id joined with the specified types.</returns>
-    public static TReturn? Get<T1, T2, T3, T4, T5, T6, T7, TReturn>(this IDbConnection connection, object id, Func<T1, T2, T3, T4, T5, T6, T7, TReturn> map, IDbTransaction? transaction = null) where TReturn : class
-        => MultiMap<T1, T2, T3, T4, T5, T6, T7, TReturn>(connection, map, id, transaction).FirstOrDefault();
+    public static TReturn? Get<T1, T2, T3, T4, T5, T6, T7, TReturn>(
+        this IDbConnection connection, 
+        object id, 
+        Func<T1, T2, T3, T4, T5, T6, T7, TReturn> map, 
+        ITableNameResolver tableNameResolver,
+        IDbTransaction? transaction = null) where TReturn : class
+        => MultiMap<T1, T2, T3, T4, T5, T6, T7, TReturn>(connection, map, tableNameResolver, id, transaction).FirstOrDefault();
 
     /// <summary>
     /// Retrieves the entity of type <typeparamref name="TReturn"/> with the specified id
@@ -222,14 +290,21 @@ public static partial class DommelMapper
     /// <typeparam name="T6">The sixth type parameter.</typeparam>
     /// <typeparam name="T7">The seventh type parameter.</typeparam>
     /// <typeparam name="TReturn">The return type parameter.</typeparam>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
     /// <param name="connection">The connection to the database. This can either be open or closed.</param>
     /// <param name="id">The id of the entity in the database.</param>
     /// <param name="map">The mapping to perform on the entities in the result set.</param>
     /// <param name="transaction">Optional transaction for the command.</param>
     /// <param name="cancellationToken">Optional cancellation token for the command.</param>
     /// <returns>The entity with the corresponding id joined with the specified types.</returns>
-    public static async Task<TReturn?> GetAsync<T1, T2, T3, T4, T5, T6, T7, TReturn>(this IDbConnection connection, object id, Func<T1, T2, T3, T4, T5, T6, T7, TReturn> map, IDbTransaction? transaction = null, CancellationToken cancellationToken = default) where TReturn : class
-        => (await MultiMapAsync<T1, T2, T3, T4, T5, T6, T7, TReturn>(connection, map, id, transaction, cancellationToken: cancellationToken)).FirstOrDefault();
+    public static async Task<TReturn?> GetAsync<T1, T2, T3, T4, T5, T6, T7, TReturn>(
+        this IDbConnection connection, 
+        object id, 
+        Func<T1, T2, T3, T4, T5, T6, T7, TReturn> map, 
+        ITableNameResolver tableNameResolver,
+        IDbTransaction? transaction = null, 
+        CancellationToken cancellationToken = default) where TReturn : class
+        => (await MultiMapAsync<T1, T2, T3, T4, T5, T6, T7, TReturn>(connection, map, tableNameResolver, id, transaction, cancellationToken: cancellationToken)).FirstOrDefault();
 
     /// <summary>
     /// Retrieves all the entities of type <typeparamref name="TReturn"/>
@@ -238,6 +313,7 @@ public static partial class DommelMapper
     /// <typeparam name="T1">The first type parameter. This is the source entity.</typeparam>
     /// <typeparam name="T2">The second type parameter.</typeparam>
     /// <typeparam name="TReturn">The return type parameter.</typeparam>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
     /// <param name="connection">The connection to the database. This can either be open or closed.</param>
     /// <param name="map">The mapping to perform on the entities in the result set.</param>
     /// <param name="transaction">Optional transaction for the command.</param>
@@ -252,13 +328,15 @@ public static partial class DommelMapper
     public static IEnumerable<TReturn> GetAll<T1, T2, TReturn>(
         this IDbConnection connection,
         Func<T1, T2, TReturn> map,
+        ITableNameResolver tableNameResolver,
         IDbTransaction? transaction = null,
-        bool buffered = true) => MultiMap<T1, T2, DontMap, DontMap, DontMap, DontMap, DontMap, TReturn>(connection, map, id: null, transaction, buffered);
+        bool buffered = true) => MultiMap<T1, T2, DontMap, DontMap, DontMap, DontMap, DontMap, TReturn>(connection, map, tableNameResolver, id: null, transaction, buffered);
 
     /// <summary>
     /// Retrieves all the entities of type <typeparamref name="TReturn"/>
     /// joined with the types specified as type parameters.
     /// </summary>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
     /// <typeparam name="T1">The first type parameter. This is the source entity.</typeparam>
     /// <typeparam name="T2">The second type parameter.</typeparam>
     /// <typeparam name="TReturn">The return type parameter.</typeparam>
@@ -277,14 +355,16 @@ public static partial class DommelMapper
     public static Task<IEnumerable<TReturn>> GetAllAsync<T1, T2, TReturn>(
         this IDbConnection connection,
         Func<T1, T2, TReturn> map,
+        ITableNameResolver tableNameResolver,
         IDbTransaction? transaction = null,
         bool buffered = true,
-          CancellationToken cancellationToken = default) => MultiMapAsync<T1, T2, DontMap, DontMap, DontMap, DontMap, DontMap, TReturn>(connection, map, id: null, transaction, buffered, cancellationToken: cancellationToken);
+          CancellationToken cancellationToken = default) => MultiMapAsync<T1, T2, DontMap, DontMap, DontMap, DontMap, DontMap, TReturn>(connection, map, tableNameResolver, id: null, transaction, buffered, cancellationToken: cancellationToken);
 
     /// <summary>
     /// Retrieves all the entities of type <typeparamref name="TReturn"/>
     /// joined with the types specified as type parameters.
     /// </summary>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
     /// <typeparam name="T1">The first type parameter. This is the source entity.</typeparam>
     /// <typeparam name="T2">The second type parameter.</typeparam>
     /// <typeparam name="T3">The third type parameter.</typeparam>
@@ -303,13 +383,15 @@ public static partial class DommelMapper
     public static IEnumerable<TReturn> GetAll<T1, T2, T3, TReturn>(
         this IDbConnection connection,
         Func<T1, T2, T3, TReturn> map,
+        ITableNameResolver tableNameResolver,
         IDbTransaction? transaction = null,
-        bool buffered = true) => MultiMap<T1, T2, T3, DontMap, DontMap, DontMap, DontMap, TReturn>(connection, map, id: null, transaction, buffered);
+        bool buffered = true) => MultiMap<T1, T2, T3, DontMap, DontMap, DontMap, DontMap, TReturn>(connection, map, tableNameResolver, id: null, transaction, buffered);
 
     /// <summary>
     /// Retrieves all the entities of type <typeparamref name="TReturn"/>
     /// joined with the types specified as type parameters.
     /// </summary>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
     /// <typeparam name="T1">The first type parameter. This is the source entity.</typeparam>
     /// <typeparam name="T2">The second type parameter.</typeparam>
     /// <typeparam name="T3">The third type parameter.</typeparam>
@@ -329,14 +411,16 @@ public static partial class DommelMapper
     public static Task<IEnumerable<TReturn>> GetAllAsync<T1, T2, T3, TReturn>(
         this IDbConnection connection,
         Func<T1, T2, T3, TReturn> map,
+        ITableNameResolver tableNameResolver,
         IDbTransaction? transaction = null,
         bool buffered = true,
-          CancellationToken cancellationToken = default) => MultiMapAsync<T1, T2, T3, DontMap, DontMap, DontMap, DontMap, TReturn>(connection, map, id: null, transaction, buffered, cancellationToken: cancellationToken);
+          CancellationToken cancellationToken = default) => MultiMapAsync<T1, T2, T3, DontMap, DontMap, DontMap, DontMap, TReturn>(connection, map, tableNameResolver, id: null, transaction, buffered, cancellationToken: cancellationToken);
 
     /// <summary>
     /// Retrieves all the entities of type <typeparamref name="TReturn"/>
     /// joined with the types specified as type parameters.
     /// </summary>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
     /// <typeparam name="T1">The first type parameter. This is the source entity.</typeparam>
     /// <typeparam name="T2">The second type parameter.</typeparam>
     /// <typeparam name="T3">The third type parameter.</typeparam>
@@ -356,13 +440,15 @@ public static partial class DommelMapper
     public static IEnumerable<TReturn> GetAll<T1, T2, T3, T4, TReturn>(
         this IDbConnection connection,
         Func<T1, T2, T3, T4, TReturn> map,
+        ITableNameResolver tableNameResolver,
         IDbTransaction? transaction = null,
-        bool buffered = true) => MultiMap<T1, T2, T3, T4, DontMap, DontMap, DontMap, TReturn>(connection, map, id: null, transaction, buffered);
+        bool buffered = true) => MultiMap<T1, T2, T3, T4, DontMap, DontMap, DontMap, TReturn>(connection, map, tableNameResolver, id: null, transaction, buffered);
 
     /// <summary>
     /// Retrieves all the entities of type <typeparamref name="TReturn"/>
     /// joined with the types specified as type parameters.
     /// </summary>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
     /// <typeparam name="T1">The first type parameter. This is the source entity.</typeparam>
     /// <typeparam name="T2">The second type parameter.</typeparam>
     /// <typeparam name="T3">The third type parameter.</typeparam>
@@ -383,14 +469,16 @@ public static partial class DommelMapper
     public static Task<IEnumerable<TReturn>> GetAllAsync<T1, T2, T3, T4, TReturn>(
         this IDbConnection connection,
         Func<T1, T2, T3, T4, TReturn> map,
+        ITableNameResolver tableNameResolver,
         IDbTransaction? transaction = null,
         bool buffered = true,
-          CancellationToken cancellationToken = default) => MultiMapAsync<T1, T2, T3, T4, DontMap, DontMap, DontMap, TReturn>(connection, map, id: null, transaction, buffered, cancellationToken: cancellationToken);
+          CancellationToken cancellationToken = default) => MultiMapAsync<T1, T2, T3, T4, DontMap, DontMap, DontMap, TReturn>(connection, map, tableNameResolver, id: null, transaction, buffered, cancellationToken: cancellationToken);
 
     /// <summary>
     /// Retrieves all the entities of type <typeparamref name="TReturn"/>
     /// joined with the types specified as type parameters.
     /// </summary>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
     /// <typeparam name="T1">The first type parameter. This is the source entity.</typeparam>
     /// <typeparam name="T2">The second type parameter.</typeparam>
     /// <typeparam name="T3">The third type parameter.</typeparam>
@@ -411,13 +499,15 @@ public static partial class DommelMapper
     public static IEnumerable<TReturn> GetAll<T1, T2, T3, T4, T5, TReturn>(
         this IDbConnection connection,
         Func<T1, T2, T3, T4, T5, TReturn> map,
+        ITableNameResolver tableNameResolver,
         IDbTransaction? transaction = null,
-        bool buffered = true) => MultiMap<T1, T2, T3, T4, T5, DontMap, DontMap, TReturn>(connection, map, id: null, transaction, buffered);
+        bool buffered = true) => MultiMap<T1, T2, T3, T4, T5, DontMap, DontMap, TReturn>(connection, map, tableNameResolver, id: null, transaction, buffered);
 
     /// <summary>
     /// Retrieves all the entities of type <typeparamref name="TReturn"/>
     /// joined with the types specified as type parameters.
     /// </summary>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
     /// <typeparam name="T1">The first type parameter. This is the source entity.</typeparam>
     /// <typeparam name="T2">The second type parameter.</typeparam>
     /// <typeparam name="T3">The third type parameter.</typeparam>
@@ -439,14 +529,16 @@ public static partial class DommelMapper
     public static Task<IEnumerable<TReturn>> GetAllAsync<T1, T2, T3, T4, T5, TReturn>(
         this IDbConnection connection,
         Func<T1, T2, T3, T4, T5, TReturn> map,
+        ITableNameResolver tableNameResolver,
         IDbTransaction? transaction = null,
         bool buffered = true,
-         CancellationToken cancellationToken = default) => MultiMapAsync<T1, T2, T3, T4, T5, DontMap, DontMap, TReturn>(connection, map, id: null, transaction, buffered, cancellationToken: cancellationToken);
+         CancellationToken cancellationToken = default) => MultiMapAsync<T1, T2, T3, T4, T5, DontMap, DontMap, TReturn>(connection, map, tableNameResolver, id: null, transaction, buffered, cancellationToken: cancellationToken);
 
     /// <summary>
     /// Retrieves all the entities of type <typeparamref name="TReturn"/>
     /// joined with the types specified as type parameters.
     /// </summary>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
     /// <typeparam name="T1">The first type parameter. This is the source entity.</typeparam>
     /// <typeparam name="T2">The second type parameter.</typeparam>
     /// <typeparam name="T3">The third type parameter.</typeparam>
@@ -468,13 +560,15 @@ public static partial class DommelMapper
     public static IEnumerable<TReturn> GetAll<T1, T2, T3, T4, T5, T6, TReturn>(
         this IDbConnection connection,
         Func<T1, T2, T3, T4, T5, T6, TReturn> map,
+        ITableNameResolver tableNameResolver,
         IDbTransaction? transaction = null,
-        bool buffered = true) => MultiMap<T1, T2, T3, T4, T5, T6, DontMap, TReturn>(connection, map, id: null, transaction, buffered);
+        bool buffered = true) => MultiMap<T1, T2, T3, T4, T5, T6, DontMap, TReturn>(connection, map, tableNameResolver, id: null, transaction, buffered);
 
     /// <summary>
     /// Retrieves all the entities of type <typeparamref name="TReturn"/>
     /// joined with the types specified as type parameters.
     /// </summary>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
     /// <typeparam name="T1">The first type parameter. This is the source entity.</typeparam>
     /// <typeparam name="T2">The second type parameter.</typeparam>
     /// <typeparam name="T3">The third type parameter.</typeparam>
@@ -497,14 +591,16 @@ public static partial class DommelMapper
     public static Task<IEnumerable<TReturn>> GetAllAsync<T1, T2, T3, T4, T5, T6, TReturn>(
         this IDbConnection connection,
         Func<T1, T2, T3, T4, T5, T6, TReturn> map,
+        ITableNameResolver tableNameResolver,
         IDbTransaction? transaction = null,
         bool buffered = true,
-        CancellationToken cancellationToken = default) => MultiMapAsync<T1, T2, T3, T4, T5, T6, DontMap, TReturn>(connection, map, id: null, transaction, buffered, cancellationToken: cancellationToken);
+        CancellationToken cancellationToken = default) => MultiMapAsync<T1, T2, T3, T4, T5, T6, DontMap, TReturn>(connection, map, tableNameResolver, id: null, transaction, buffered, cancellationToken: cancellationToken);
 
     /// <summary>
     /// Retrieves all the entities of type <typeparamref name="TReturn"/>
     /// joined with the types specified as type parameters.
     /// </summary>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
     /// <typeparam name="T1">The first type parameter. This is the source entity.</typeparam>
     /// <typeparam name="T2">The second type parameter.</typeparam>
     /// <typeparam name="T3">The third type parameter.</typeparam>
@@ -526,14 +622,16 @@ public static partial class DommelMapper
     /// </returns>
     public static IEnumerable<TReturn> GetAll<T1, T2, T3, T4, T5, T6, T7, TReturn>(
         this IDbConnection connection,
+        ITableNameResolver tableNameResolver,
         Func<T1, T2, T3, T4, T5, T6, T7, TReturn> map,
         IDbTransaction? transaction = null,
-        bool buffered = true) => MultiMap<T1, T2, T3, T4, T5, T6, T7, TReturn>(connection, map, id: null, transaction, buffered);
+        bool buffered = true) => MultiMap<T1, T2, T3, T4, T5, T6, T7, TReturn>(connection, map, tableNameResolver,id: null, transaction, buffered);
 
     /// <summary>
     /// Retrieves all the entities of type <typeparamref name="TReturn"/>
     /// joined with the types specified as type parameters.
     /// </summary>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
     /// <typeparam name="T1">The first type parameter. This is the source entity.</typeparam>
     /// <typeparam name="T2">The second type parameter.</typeparam>
     /// <typeparam name="T3">The third type parameter.</typeparam>
@@ -557,12 +655,13 @@ public static partial class DommelMapper
     public static Task<IEnumerable<TReturn>> GetAllAsync<T1, T2, T3, T4, T5, T6, T7, TReturn>(
         this IDbConnection connection,
         Func<T1, T2, T3, T4, T5, T6, T7, TReturn> map,
+        ITableNameResolver tableNameResolver,
         IDbTransaction? transaction = null,
         bool buffered = true,
-        CancellationToken cancellationToken = default) => MultiMapAsync<T1, T2, T3, T4, T5, T6, T7, TReturn>(connection, map, id: null, transaction, buffered, cancellationToken: cancellationToken);
+        CancellationToken cancellationToken = default) => MultiMapAsync<T1, T2, T3, T4, T5, T6, T7, TReturn>(connection, map, tableNameResolver, id: null, transaction, buffered, cancellationToken: cancellationToken);
 
     private static IEnumerable<TReturn> MultiMap<T1, T2, T3, T4, T5, T6, T7, TReturn>(
-        IDbConnection connection, Delegate map, object? id, IDbTransaction? transaction = null, bool buffered = true, Func<DynamicParameters, string>? appendSql = null)
+        IDbConnection connection, Delegate map, ITableNameResolver tableNameResolver, object? id, IDbTransaction? transaction = null, bool buffered = true, Func<DynamicParameters, string>? appendSql = null)
     {
         var resultType = typeof(TReturn);
         var includeTypes = new[]
@@ -578,7 +677,7 @@ public static partial class DommelMapper
         .Where(t => t != typeof(DontMap))
         .ToArray();
 
-        var sql = BuildMultiMapQuery(GetSqlBuilder(connection), resultType, includeTypes, id, out var parameters);
+        var sql = BuildMultiMapQuery(GetSqlBuilder(connection), resultType, includeTypes, tableNameResolver, id, out var parameters);
         if (appendSql != null)
         {
             parameters ??= new DynamicParameters();
@@ -600,7 +699,7 @@ public static partial class DommelMapper
     }
 
     private static Task<IEnumerable<TReturn>> MultiMapAsync<T1, T2, T3, T4, T5, T6, T7, TReturn>(
-        IDbConnection connection, Delegate map, object? id, IDbTransaction? transaction = null, bool buffered = true, Func<DynamicParameters, string>? appendSql = null, CancellationToken cancellationToken = default)
+        IDbConnection connection, Delegate map, ITableNameResolver tableNameResolver, object? id, IDbTransaction? transaction = null, bool buffered = true, Func<DynamicParameters, string>? appendSql = null, CancellationToken cancellationToken = default)
     {
         var resultType = typeof(TReturn);
         var includeTypes = new[]
@@ -616,7 +715,7 @@ public static partial class DommelMapper
         .Where(t => t != typeof(DontMap))
         .ToArray();
 
-        var sql = BuildMultiMapQuery(GetSqlBuilder(connection), resultType, includeTypes, id, out var parameters);
+        var sql = BuildMultiMapQuery(GetSqlBuilder(connection), resultType, includeTypes, tableNameResolver, id, out var parameters);
         if (appendSql != null)
         {
             parameters ??= new DynamicParameters();
@@ -649,9 +748,9 @@ public static partial class DommelMapper
             .Select(p => ColumnNameResolver.ResolveColumnName(p.Property)));
     }
 
-    internal static string BuildMultiMapQuery(ISqlBuilder sqlBuilder, Type resultType, Type[] includeTypes, object? id, out DynamicParameters? parameters)
+    internal static string BuildMultiMapQuery(ISqlBuilder sqlBuilder, Type resultType, Type[] includeTypes, ITableNameResolver tableNameResolver, object? id, out DynamicParameters? parameters)
     {
-        var resultTableName = Resolvers.Table(resultType, sqlBuilder);
+        var resultTableName = Resolvers.Table(resultType, sqlBuilder, tableNameResolver);
         var resultTableKeyColumnName = Resolvers.Column(Resolvers.KeyProperties(resultType).Single().Property, sqlBuilder);
         var sql = $"select * from {resultTableName}";
 
@@ -661,7 +760,7 @@ public static partial class DommelMapper
         {
             // Determine the table name of the joined table.
             var includeType = includeTypes[i];
-            var foreignKeyTableName = Resolvers.Table(includeType, sqlBuilder);
+            var foreignKeyTableName = Resolvers.Table(includeType, sqlBuilder, tableNameResolver);
 
             // Determine the foreign key and the relationship type.
             var foreignKeyProperty = Resolvers.ForeignKeyProperty(sourceType, includeType, out var relation);
