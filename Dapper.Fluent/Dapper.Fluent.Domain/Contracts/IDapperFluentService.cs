@@ -12,7 +12,7 @@ namespace Dapper.Fluent.Domain.Contracts
         PublicSchemaEntity GetWithCategory(int id);
         IEnumerable<PublicSchemaEntity> GetAll();
         IEnumerable<LogEntity> GetLogs(int id);
-        PublicSchemaEntity Insert(PublicSchemaEntity entity);
+        void Insert(PublicSchemaEntity entity);
         PublicSchemaEntity Update(int id, PublicSchemaEntity entity);
         void Delete(int id);
     }

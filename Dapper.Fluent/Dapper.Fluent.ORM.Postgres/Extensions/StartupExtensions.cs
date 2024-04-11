@@ -9,13 +9,12 @@ namespace Dapper.Fluent.ORM.Postgres.Extensions;
 
 public static class StartupExtensions
 {
-    public static IServiceCollection AddPostgresRepositoryWithMigration(this IServiceCollection services, string connectionString, bool enablePooling, string defaultSchema = "public", params Assembly[] assembliesWithMappers)
+    public static IServiceCollection AddPostgresRepositoryWithMigration(this IServiceCollection services, string connectionString, string defaultSchema = "public", params Assembly[] assembliesWithMappers)
     {
         services.AddScoped(typeof(IRepositorySettings), service => new PostgresRepositorySettings
         {
             ConnString = connectionString,
-            DefaultSchema = defaultSchema ?? "public",
-            EnablePooling = enablePooling
+            DefaultSchema = defaultSchema ?? "public"            
         });
 
         services

@@ -27,8 +27,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dommel", "Dommel", "{192FB8
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dommel", "Dommel\Dommel.csproj", "{BC529238-D581-4621-A38E-AF6A9CEFF5BD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dommel.Json", "Dommel.Json\Dommel.Json.csproj", "{F4C4CB80-F294-4623-B527-DB16FBE181D5}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -71,10 +69,6 @@ Global
 		{BC529238-D581-4621-A38E-AF6A9CEFF5BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC529238-D581-4621-A38E-AF6A9CEFF5BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BC529238-D581-4621-A38E-AF6A9CEFF5BD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F4C4CB80-F294-4623-B527-DB16FBE181D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F4C4CB80-F294-4623-B527-DB16FBE181D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F4C4CB80-F294-4623-B527-DB16FBE181D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F4C4CB80-F294-4623-B527-DB16FBE181D5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -89,7 +83,6 @@ Global
 		{81AFEF2F-4028-4B5B-85CE-BF9E3F8D7168} = {E1C865B3-BA43-4385-A2A5-216D0714CA3D}
 		{F7FE9E16-24C0-497C-BD5B-C3588C68256F} = {E1C865B3-BA43-4385-A2A5-216D0714CA3D}
 		{BC529238-D581-4621-A38E-AF6A9CEFF5BD} = {192FB8D9-767C-479F-9372-B094F70AE5A7}
-		{F4C4CB80-F294-4623-B527-DB16FBE181D5} = {192FB8D9-767C-479F-9372-B094F70AE5A7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {555D8BA0-6DBF-4649-9838-DBB4827B798F}

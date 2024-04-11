@@ -1,4 +1,5 @@
-﻿using Dapper.Fluent.ORM.MultiSchema;
+﻿using Dapper.Fluent.ORM.Contracts;
+using Dapper.Fluent.ORM.MultiSchema;
 using FluentMigrator.Runner.VersionTableInfo;
 
 namespace Dapper.Fluent.ORM.Migrations
@@ -6,18 +7,18 @@ namespace Dapper.Fluent.ORM.Migrations
     [VersionTableMetaData]
     public class MultiSchemaMigrationTable : IVersionTableMetaData
     {
-        private readonly IRequestInfo _info;
+        private readonly ISchema _schema;
 
-        public MultiSchemaMigrationTable(IRequestInfo info)
+        public MultiSchemaMigrationTable(ISchema schema)
         {
-            _info = info;
+            _schema = schema;
         }
 
         public object ApplicationContext { get; set; }
 
         public bool OwnsSchema => true;
 
-        public string SchemaName => _info.GetSchema();
+        public string SchemaName => _schema.GetSchema();
 
         public string TableName => "migrations";
 

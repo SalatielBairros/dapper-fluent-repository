@@ -11,7 +11,7 @@ namespace Dapper.Fluent.Repository.Contracts
     {
         void Delete(int id);
         bool Update(PublicSchemaEntity entity);
-        int Insert(PublicSchemaEntity entity);
+        void Insert(PublicSchemaEntity entity);
         IEnumerable<PublicSchemaEntity> GetAll();
         PublicSchemaEntity Get(int id);
         PublicSchemaEntity GetWithCategory(int id);

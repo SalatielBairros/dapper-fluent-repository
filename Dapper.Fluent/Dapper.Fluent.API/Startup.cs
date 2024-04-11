@@ -44,6 +44,7 @@ namespace Dapper.Fluent.API
             services.AddScoped<IDapperFluentService, DapperFluentService>();
             services.AddScoped<IPublicSchemaEntityRepository, PublicSchemaEntityRepository>();
             services.AddScoped<ILogRepository, LogRepository>();
+            services.AddScoped<ICategoryRepository, CategoryRepository>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IDapperORMRunner dapper)

@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Dapper.Fluent.Mapping;
 using Dapper.Fluent.ORM.Contracts;
-using Dapper.Fluent.ORM.MultiSchema;
 using FluentMigrator.Runner;
 using Microsoft.Extensions.DependencyInjection;
 

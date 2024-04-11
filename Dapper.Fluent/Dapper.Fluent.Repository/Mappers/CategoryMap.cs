@@ -12,6 +12,7 @@ namespace Dapper.Fluent.Repository.FluentMapper
             ToTable("category", schema);
             MapToColumn(x => x.Id).IsKey().IsIdentity();
             MapToColumn(x => x.Description);
+            MapToColumn(x => x.Data).AsJson();
         }
     }
 }

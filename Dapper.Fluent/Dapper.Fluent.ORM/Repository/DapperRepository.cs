@@ -100,26 +100,26 @@ public abstract class DapperRepository<TEntity> : IDapperRepository<TEntity> whe
 
     #region Add
 
-    public TReturn Add<TReturn>(TEntity entity)
+    public void Add(TEntity entity)
     {
         EntityValidation.ThrowIfErrorOn(entity);
-        return Connection.Use(db => (TReturn)db.Insert(entity, TableNameResolver));
+        Connection.Use(db => db.Insert(entity, TableNameResolver));
     }
 
-    public void Add(IEnumerable<TEntity> entities)
+    public void AddList(IEnumerable<TEntity> entities)
     {
         var data = entities.ToList();
         data.ForEach(EntityValidation.ThrowIfErrorOn);
         Connection.Use(db => db.InsertAll(data, TableNameResolver));
     }
 
-    public Task AddAsync(IEnumerable<TEntity> entities)
+    public Task AddListAsync(IEnumerable<TEntity> entities)
     {
         entities.ToList().ForEach(EntityValidation.ThrowIfErrorOn);
         return Connection.UseAsync(db => db.InsertAllAsync(entities, TableNameResolver));
     }
 
-    public async Task<TReturn> AddAsync<TReturn>(TEntity entity) => await Task.Run(() => Add<TReturn>(entity));
+    public async Task AddAsync(TEntity entity) => await Task.Run(() => Add(entity));
 
     public void BulkAdd(IEnumerable<TEntity> entities, int batchSize = 1000)
     {

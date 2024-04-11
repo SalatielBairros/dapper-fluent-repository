@@ -10,10 +10,10 @@ namespace Dapper.Fluent.ORM.Contracts
     {
         IDapperConnection Connection { get; }
         ITableNameResolver TableNameResolver { get; }
-        void Add(IEnumerable<TEntity> entities);
-        TReturn Add<TReturn>(TEntity entity);
-        Task AddAsync(IEnumerable<TEntity> entities);
-        Task<TReturn> AddAsync<TReturn>(TEntity entity);
+        void AddList(IEnumerable<TEntity> entities);
+        void Add(TEntity entity);
+        Task AddListAsync(IEnumerable<TEntity> entities);
+        Task AddAsync(TEntity entity);
         void BulkAdd(IEnumerable<TEntity> entities, int batchSize = 1000);
         Task BulkAddAsync(IEnumerable<TEntity> entities, int batchSize = 1000);
         IEnumerable<TEntity> All();

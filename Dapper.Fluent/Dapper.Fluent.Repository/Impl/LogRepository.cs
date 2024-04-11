@@ -16,6 +16,6 @@ namespace Dapper.Fluent.Repository.Impl
 
         public void DeleteAllByEntity(int entityId) => _repository.Remove(x => x.PublicId == entityId);
         public IEnumerable<LogEntity> GetAllByEntity(int entityId) => _repository.GetData(x => x.PublicId == entityId);
-        public int Insert(LogEntity log) => _repository.Add(log);
+        public void Insert(LogEntity log) => _repository.Add(log);
     }
 }

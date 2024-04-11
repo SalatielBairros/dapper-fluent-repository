@@ -33,7 +33,7 @@ namespace Dapper.Fluent.API.Controllers
         public IEnumerable<LogEntity> GetLogs(int id) => _service.GetLogs(id);
 
         [HttpPost]
-        public PublicSchemaEntity Post([FromBody] PublicSchemaEntity entity) => _service.Insert(entity);
+        public void Post([FromBody] PublicSchemaEntity entity) => _service.Insert(entity);
 
         [HttpPatch("{id}")]
         public PublicSchemaEntity Path(int id, [FromBody] PublicSchemaEntity entity) => _service.Update(id, entity);

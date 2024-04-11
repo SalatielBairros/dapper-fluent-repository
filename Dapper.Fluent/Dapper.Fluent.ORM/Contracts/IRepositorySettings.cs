@@ -5,6 +5,5 @@ public interface IRepositorySettings
 {
     string ConnString { get; }
     string Schema { get; }
-    string DefaultSchema { get; }
-    bool EnablePooling { get; }
+    string DefaultSchema { get; }    
 }

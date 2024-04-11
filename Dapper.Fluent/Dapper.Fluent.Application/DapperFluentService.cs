@@ -10,11 +10,13 @@ namespace Dapper.Fluent.Application
     {
         private readonly IPublicSchemaEntityRepository _entityRepository;
         private readonly ILogRepository _logRepository;
+        private readonly ICategoryRepository _categoryRepository;
 
-        public DapperFluentService(IPublicSchemaEntityRepository entityRepository, ILogRepository logRepository)
+        public DapperFluentService(IPublicSchemaEntityRepository entityRepository, ILogRepository logRepository, ICategoryRepository categoryRepository)
         {
             this._entityRepository = entityRepository;
             this._logRepository = logRepository;
+            this._categoryRepository = categoryRepository;
         }
 
         public void Delete(int id)
@@ -27,11 +29,12 @@ namespace Dapper.Fluent.Application
         public PublicSchemaEntity GetWithCategory(int id) => _entityRepository.GetWithCategory(id);
         public IEnumerable<PublicSchemaEntity> GetAll() => _entityRepository.GetAll();
         public IEnumerable<LogEntity> GetLogs(int id) => _logRepository.GetAllByEntity(id);
-        public PublicSchemaEntity Insert(PublicSchemaEntity entity)
+        public void Insert(PublicSchemaEntity entity)
         {
-            entity.Id = _entityRepository.Insert(entity);
+            _categoryRepository.Insert(entity.Category);
+            entity.CategoryId = 1;
+            _entityRepository.Insert(entity);
             _logRepository.Insert(new LogEntity(entity));
-            return Get(entity.Id);
         }
         public PublicSchemaEntity Update(int id, PublicSchemaEntity entity)
         {
