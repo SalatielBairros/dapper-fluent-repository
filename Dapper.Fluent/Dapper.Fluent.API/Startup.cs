@@ -13,6 +13,7 @@ using Dapper.Fluent.ORM.Contracts;
 using Dapper.Fluent.ORM.Postgres.Extensions;
 using Dapper.Fluent.Repository.Mappers;
 using Dapper.Fluent.ORM.MultiSchema;
+using Dapper.Fluent.Repository.Migration;
 
 namespace Dapper.Fluent.API
 {
@@ -30,7 +31,9 @@ namespace Dapper.Fluent.API
             services.AddHttpContextAccessor();
             
             services                
-                .AddPostgresRepositoryWithMigration(Configuration["ConnectionString"])
+                .AddPostgresRepositoryWithMigration(
+                    Configuration["ConnectionString"],
+                    assembliesWithMappers: typeof(Reference).Assembly)
                 .AddMapperConfiguration<MapperConfiguration>()
                 .AddDapperORM()
                 .AddDapperMultiSchemaOptions();            
