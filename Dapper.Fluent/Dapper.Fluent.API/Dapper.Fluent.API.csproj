@@ -14,7 +14,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Dapper.Fluent.Application\Dapper.Fluent.Application.csproj" />
     <ProjectReference Include="..\Dapper.Fluent.Domain\Dapper.Fluent.Domain.csproj" />
-    <ProjectReference Include="..\Dapper.Fluent.ORM.MultiSchema\Dapper.Fluent.ORM.MultiSchema.csproj" />
     <ProjectReference Include="..\Dapper.Fluent.ORM.Postgres\Dapper.Fluent.ORM.Postgres.csproj" />
     <ProjectReference Include="..\Dapper.Fluent.Repository\Dapper.Fluent.Repository.csproj" />
   </ItemGroup>

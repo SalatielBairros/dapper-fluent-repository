@@ -14,11 +14,20 @@ public class PublicSchemaEntityRepository : IPublicSchemaEntityRepository
         this._repository = repository;
     }
 
+    public bool HasAny() => _repository.Any();
+
+    public bool HasAny(int id) => _repository.Any(x => x.Id == id);
+
     public void Delete(int id) => _repository.Remove(x => x.Id == id);
+
     public PublicSchemaEntity Get(int id) => _repository.Find(x => x.Id == id);
+
     public IEnumerable<PublicSchemaEntity> GetAll() => _repository.All();
+
     public void Insert(PublicSchemaEntity entity) => _repository.Add(entity);
+
     public bool Update(PublicSchemaEntity entity) => _repository.Update(entity);
+
     public PublicSchemaEntity GetWithCategory(int id)
         => _repository.JoinWith<Category>(id, (entity, category) =>
         {

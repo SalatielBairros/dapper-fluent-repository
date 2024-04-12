@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using System.Reflection;
 using Dapper.Fluent.ORM.Mapping;
 using Dommel;
@@ -10,9 +11,6 @@ namespace Dapper.Fluent.Mapping.Resolvers
     /// </summary>
     public class ColumnNameResolver : IColumnNameResolver
     {
-        private static readonly IColumnNameResolver DefaultResolver = new DefaultColumnNameResolver();
-
-        /// <inheritdoc/>
         public string ResolveColumnName(PropertyInfo propertyInfo)
         {
             if (propertyInfo.DeclaringType != null)
@@ -42,7 +40,8 @@ namespace Dapper.Fluent.Mapping.Resolvers
                 }
             }
 
-            return DefaultResolver.ResolveColumnName(propertyInfo);
+            var columnAttr = propertyInfo.GetCustomAttribute<ColumnAttribute>();
+            return columnAttr?.Name ?? propertyInfo.Name;
         }
     }
 }

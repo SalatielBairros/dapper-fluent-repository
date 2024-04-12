@@ -18,6 +18,7 @@ namespace Dapper.Fluent.Repository.Mappers
             FluentMapping.AddMap(new CategoryMap(_repository.DefaultSchema));
             FluentMapping.AddMap(new PublicSchemaEntityMap(_repository.DefaultSchema));
             FluentMapping.AddMap(new LogEntityMap());
+            FluentMapping.AddMap(new BigDataMap());
         }
 
         public void SetDynamicSchema(string schema) => FluentMapping.SetDynamicSchema(schema);

@@ -21,14 +21,23 @@ namespace Dapper.Fluent.Application
 
         public void Delete(int id)
         {
-            _entityRepository.Delete(id);
-            _logRepository.DeleteAllByEntity(id);
+            if (_entityRepository.HasAny(id))
+            {
+                _entityRepository.Delete(id);
+                _logRepository.DeleteAllByEntity(id);
+            }
+
+            throw new InvalidOperationException("No item to remove");
         }
 
         public PublicSchemaEntity Get(int id) => _entityRepository.Get(id);
+
         public PublicSchemaEntity GetWithCategory(int id) => _entityRepository.GetWithCategory(id);
+
         public IEnumerable<PublicSchemaEntity> GetAll() => _entityRepository.GetAll();
+
         public IEnumerable<LogEntity> GetLogs(int id) => _logRepository.GetAllByEntity(id);
+
         public void Insert(PublicSchemaEntity entity)
         {
             _categoryRepository.Insert(entity.Category);
@@ -36,6 +45,7 @@ namespace Dapper.Fluent.Application
             _entityRepository.Insert(entity);
             _logRepository.Insert(new LogEntity(entity));
         }
+
         public PublicSchemaEntity Update(int id, PublicSchemaEntity entity)
         {
             entity.Id = id;

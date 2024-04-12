@@ -1,6 +1,8 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Reflection;
 using Dapper.Fluent.ORM.Mapping;
 using Dapper.FluentMap.Mapping;
 using Dommel;
@@ -25,7 +27,7 @@ namespace Dapper.Fluent.Mapping.Resolvers
                 var allPropertyMaps = entityMap.PropertyMaps.OfType<DapperFluentPropertyMap>();
                 var keyPropertyInfos = allPropertyMaps
                      .Where(e => e.Key)
-                     .Select(x => new ColumnPropertyInfo(x.PropertyInfo, x.GeneratedOption ?? (x.Key ? DatabaseGeneratedOption.Identity : DatabaseGeneratedOption.None)))
+                     .Select(x => new ColumnPropertyInfo(x.PropertyInfo, x.GeneratedOption ?? (x.Identity ? DatabaseGeneratedOption.Identity : DatabaseGeneratedOption.None)))
                      .ToArray();
 
                 try
@@ -44,7 +46,18 @@ namespace Dapper.Fluent.Mapping.Resolvers
                 return keyPropertyInfos;
             }
 
-            return DefaultResolver.ResolveKeyProperties(type);
+            var keyProps = Dommel.Resolvers
+                .Properties(type)
+                .Select(x => x.Property)
+                .Where(p => string.Equals(p.Name, "Id", StringComparison.OrdinalIgnoreCase) || p.GetCustomAttribute<KeyAttribute>() != null)
+                .ToArray();
+
+            if (keyProps.Length == 0)
+            {
+                throw new InvalidOperationException($"Could not find the key properties for type '{type.FullName}'.");
+            }
+
+            return keyProps.Select(p => new ColumnPropertyInfo(p, isKey: true)).ToArray();
         }
     }
 }

@@ -6,6 +6,7 @@ using System.Data;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Dapper;
+using Dommel.QueryMethods;
 
 namespace Dommel;
 
@@ -64,13 +65,7 @@ public static partial class DommelMapper
     /// </summary>
     public static bool IncludeTableNameInColumnName = true;
 
-    /// <summary>
-    /// Use the default <see cref="SqlMapper.ITypeMap"/> provided by Dapper instead
-    /// of the custom Dommel type map which supports <see cref="ColumnAttribute"/>.
-    /// </summary>
-    public static void UseDefaultTypeMap() => SqlMapper.TypeMapProvider = DefaultTypeMapProvider;
-
-    /// <summary>
+        /// <summary>
     /// Sets the <see cref="IPropertyResolver"/> implementation for resolving key of entities.
     /// </summary>
     /// <param name="resolver">An instance of <see cref="IPropertyResolver"/>.</param>

@@ -32,7 +32,7 @@ public class DapperRepositoryRunner : IDapperORMRunner
     {
         lock (ThisLock)
         {
-            using var scope = _serviceProvider.CreateScope();
+            using var scope = _serviceProvider.CreateScope();                        
             var schemaProxy = scope.ServiceProvider.GetService<ISchema>();
 
             var schema = schemaProxy.GetSchema();

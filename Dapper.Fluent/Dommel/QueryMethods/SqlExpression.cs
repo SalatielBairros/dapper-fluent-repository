@@ -5,8 +5,9 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using Dapper;
+using Dommel;
 
-namespace Dommel;
+namespace Dommel.QueryMethods;
 
 /// <summary>
 /// Represents a typed SQL expression.
@@ -17,11 +18,11 @@ public class SqlExpression<TEntity>
     private static readonly Type EntityType = typeof(TEntity);
     private static readonly Func<TEntity> NewEntityFunc = Expression.Lambda<Func<TEntity>>(
         Expression.New(typeof(TEntity).GetConstructors()[0])).Compile();
-    private readonly List<(string, string?)> _whereStatements = new List<(string, string?)>();
+    private readonly List<(string, string)> _whereStatements = new List<(string, string)>();
     private readonly StringBuilder _orderByBuilder = new();
     private readonly DynamicParameters _parameters = new();
-    private string? _selectQuery;
-    private string? _pagingQuery;
+    private string _selectQuery;
+    private string _pagingQuery;
     private int _parameterIndex;
 
     /// <summary>
@@ -68,7 +69,7 @@ public class SqlExpression<TEntity>
             throw new ArgumentNullException(nameof(selector));
         }
 
-        PropertyInfo[]? props = null;
+        PropertyInfo[] props = null;
 
         // Get properties from expression
         if (selector.NodeType == ExpressionType.Lambda && selector.Body?.NodeType == ExpressionType.New)
@@ -110,7 +111,7 @@ public class SqlExpression<TEntity>
     /// </summary>
     /// <param name="expression">The filter expression on the entity.</param>
     /// <returns>The current <see cref="SqlExpression{TEntity}"/> instance.</returns>
-    public virtual SqlExpression<TEntity> Where(Expression<Func<TEntity, bool>>? expression)
+    public virtual SqlExpression<TEntity> Where(Expression<Func<TEntity, bool>> expression)
     {
         if (expression != null)
         {
@@ -125,7 +126,7 @@ public class SqlExpression<TEntity>
     /// </summary>
     /// <param name="expression">The filter expression on the entity.</param>
     /// <returns>The current <see cref="SqlExpression{TEntity}"/> instance.</returns>
-    public virtual SqlExpression<TEntity> AndWhere(Expression<Func<TEntity, bool>>? expression)
+    public virtual SqlExpression<TEntity> AndWhere(Expression<Func<TEntity, bool>> expression)
     {
         if (_whereStatements.Count == 0)
         {
@@ -143,7 +144,7 @@ public class SqlExpression<TEntity>
     /// </summary>
     /// <param name="expression">The filter expression on the entity.</param>
     /// <returns>The current <see cref="SqlExpression{TEntity}"/> instance.</returns>
-    public virtual SqlExpression<TEntity> OrWhere(Expression<Func<TEntity, bool>>? expression)
+    public virtual SqlExpression<TEntity> OrWhere(Expression<Func<TEntity, bool>> expression)
     {
         if (_whereStatements.Count == 0)
         {
@@ -156,7 +157,7 @@ public class SqlExpression<TEntity>
         return this;
     }
 
-    private void AppendToWhere(string? conditionOperator, Expression expression)
+    private void AppendToWhere(string conditionOperator, Expression expression)
     {
         var sqlExpression = VisitExpression(expression).ToString()!;
         _whereStatements.Add((sqlExpression, _whereStatements.Count == 0 ? null : conditionOperator));
@@ -179,7 +180,7 @@ public class SqlExpression<TEntity>
     /// </summary>
     /// <param name="selector">The column to order by. E.g. <code>x => x.Name</code>.</param>
     /// <returns>The current <see cref="SqlExpression{TEntity}"/> instance.</returns>
-    public virtual SqlExpression<TEntity> OrderBy(Expression<Func<TEntity, object?>> selector)
+    public virtual SqlExpression<TEntity> OrderBy(Expression<Func<TEntity, object>> selector)
     {
         OrderByCore(selector, "asc");
         return this;
@@ -201,7 +202,7 @@ public class SqlExpression<TEntity>
     /// </summary>
     /// <param name="selector">The column to order by. E.g. <code>x => x.Name</code>.</param>
     /// <returns>The current <see cref="SqlExpression{TEntity}"/> instance.</returns>
-    public virtual SqlExpression<TEntity> OrderByDescending(Expression<Func<TEntity, object?>> selector)
+    public virtual SqlExpression<TEntity> OrderByDescending(Expression<Func<TEntity, object>> selector)
     {
         OrderByCore(selector, "desc");
         return this;
@@ -218,7 +219,7 @@ public class SqlExpression<TEntity>
         return this;
     }
 
-    private void OrderByCore(Expression<Func<TEntity, object?>> selector, string direction)
+    private void OrderByCore(Expression<Func<TEntity, object>> selector, string direction)
     {
         if (selector == null)
         {
@@ -229,7 +230,7 @@ public class SqlExpression<TEntity>
         AppendOrderBy(column, direction);
     }
 
-    private void AppendOrderBy(string? column, string direction, bool prepend = false)
+    private void AppendOrderBy(string column, string direction, bool prepend = false)
     {
         if (string.IsNullOrEmpty(column))
         {

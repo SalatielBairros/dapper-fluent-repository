@@ -12,8 +12,6 @@ namespace Dapper.Fluent.Mapping.Resolvers
 {
     public class PropertyResolver : DefaultPropertyResolver
     {
-        private static readonly IPropertyResolver DefaultResolver = new DefaultPropertyResolver();
-
         private IEnumerable<DapperFluentPropertyMap> FilterTypes(IEnumerable<DapperFluentPropertyMap> properties)
         {
             foreach (var property in properties.Where(x => !x.Ignored))
@@ -40,10 +38,7 @@ namespace Dapper.Fluent.Mapping.Resolvers
             }
             else
             {
-                foreach (var property in DefaultResolver.ResolveProperties(type))
-                {
-                    yield return property;
-                }
+                throw new NotImplementedException("Entity must have a mapper associated");
             }
         }
     }

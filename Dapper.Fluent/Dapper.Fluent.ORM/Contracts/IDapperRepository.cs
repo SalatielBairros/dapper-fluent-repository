@@ -9,10 +9,8 @@ namespace Dapper.Fluent.ORM.Contracts
     public interface IDapperRepository<TEntity> where TEntity : class
     {
         IDapperConnection Connection { get; }
-        ITableNameResolver TableNameResolver { get; }
-        void AddList(IEnumerable<TEntity> entities);
+        ITableNameResolver TableNameResolver { get; }        
         void Add(TEntity entity);
-        Task AddListAsync(IEnumerable<TEntity> entities);
         Task AddAsync(TEntity entity);
         void BulkAdd(IEnumerable<TEntity> entities, int batchSize = 1000);
         Task BulkAddAsync(IEnumerable<TEntity> entities, int batchSize = 1000);
@@ -48,5 +46,6 @@ namespace Dapper.Fluent.ORM.Contracts
         Task<bool> UpdateTransactionAsync(TEntity entity);
         void RemoveTransaction(Expression<Func<TEntity, bool>> filter);
         Task RemoveTransactionAsync(Expression<Func<TEntity, bool>> filter);
+        public bool Any(Expression<Func<TEntity, bool>> filter = null);
     }
 }

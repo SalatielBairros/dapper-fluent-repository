@@ -22,10 +22,8 @@ public class DefaultPropertyResolver : IPropertyResolver
         typeof(DateTimeOffset),
         typeof(TimeSpan),
         typeof(byte[]),
-#if NET6_0_OR_GREATER
         typeof(DateOnly),
         typeof(TimeOnly),
-#endif
     };
 
     /// <summary>
@@ -37,7 +35,7 @@ public class DefaultPropertyResolver : IPropertyResolver
     {
         foreach (var property in FilterComplexTypes(type.GetRuntimeProperties()))
         {
-            if (!property.IsDefined(typeof(IgnoreAttribute)) && !property.IsDefined(typeof(NotMappedAttribute)))
+            if (!property.IsDefined(typeof(NotMappedAttribute)))
             {
                 yield return new ColumnPropertyInfo(property);
             }

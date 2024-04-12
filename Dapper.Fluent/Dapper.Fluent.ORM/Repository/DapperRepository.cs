@@ -105,20 +105,7 @@ public abstract class DapperRepository<TEntity> : IDapperRepository<TEntity> whe
         EntityValidation.ThrowIfErrorOn(entity);
         Connection.Use(db => db.Insert(entity, TableNameResolver));
     }
-
-    public void AddList(IEnumerable<TEntity> entities)
-    {
-        var data = entities.ToList();
-        data.ForEach(EntityValidation.ThrowIfErrorOn);
-        Connection.Use(db => db.InsertAll(data, TableNameResolver));
-    }
-
-    public Task AddListAsync(IEnumerable<TEntity> entities)
-    {
-        entities.ToList().ForEach(EntityValidation.ThrowIfErrorOn);
-        return Connection.UseAsync(db => db.InsertAllAsync(entities, TableNameResolver));
-    }
-
+    
     public async Task AddAsync(TEntity entity) => await Task.Run(() => Add(entity));
 
     public void BulkAdd(IEnumerable<TEntity> entities, int batchSize = 1000)
@@ -248,6 +235,17 @@ public abstract class DapperRepository<TEntity> : IDapperRepository<TEntity> whe
     public async Task RemoveTransactionAsync(Expression<Func<TEntity, bool>> filter)
     {
         await Connection.UseTransactionAsync(async db => await db.DeleteMultipleAsync(filter, TableNameResolver));
+    }
+
+    #endregion
+
+    #region Any
+
+    public bool Any(Expression<Func<TEntity, bool>> filter = null)
+    {
+        return filter == null
+            ? Connection.Use(db => db.Any<TEntity>(TableNameResolver))
+            : Connection.Use(db => db.Any<TEntity>(filter, TableNameResolver));
     }
 
     #endregion
