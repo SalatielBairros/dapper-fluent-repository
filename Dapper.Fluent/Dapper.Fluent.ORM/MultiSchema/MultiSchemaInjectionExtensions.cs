@@ -7,11 +7,19 @@ namespace Dapper.Fluent.ORM.MultiSchema;
 
 public static class MultiSchemaInjectionExtensions
 {
-    public static IServiceCollection AddDapperMultiSchemaOptions(this IServiceCollection services)
+    public static IServiceCollection AddHttpMultiSchema(this IServiceCollection services)
     {
-        services.AddHttpContextAccessor();
-        services.AddScoped<ISchema, HttpSchemaProxy>();
-        services.AddScoped<IVersionTableMetaData, MultiSchemaMigrationTable>();
-        return services;
+        return services
+            .AddHttpContextAccessor()
+            .AddScoped<ISchema, HttpSchemaProxy>()
+            .AddScoped<IVersionTableMetaData, MultiSchemaMigrationTable>();
+    }
+
+    public static IServiceCollection AddCustomMultiSchema<TSchemaResolver>(this IServiceCollection services)
+        where TSchemaResolver : ISchema
+    {
+        return services
+            .AddScoped<ISchema, HttpSchemaProxy>()
+            .AddScoped<IVersionTableMetaData, MultiSchemaMigrationTable>();
     }
 }

@@ -36,7 +36,7 @@ namespace Dapper.Fluent.API
                     assembliesWithMappers: typeof(Reference).Assembly)
                 .AddMapperConfiguration<MapperConfiguration>()
                 .AddDapperORM()
-                .AddDapperMultiSchemaOptions();            
+                .AddHttpMultiSchema();            
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
