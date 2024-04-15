@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
 
-namespace Dommel;
+namespace Dapper.Fluent.ORM.Dommel;
 
 public static partial class DommelMapper
 {

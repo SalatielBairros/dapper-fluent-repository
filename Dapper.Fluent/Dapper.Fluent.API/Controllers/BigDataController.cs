@@ -30,18 +30,4 @@ public class BigDataController : ControllerBase
         await _repository.InsertListAsync(data);
         return NoContent();
     }
-
-    [HttpPost("bulk")]
-    public IActionResult Bulk(IEnumerable<BigData> data)
-    {
-        _repository.BulkInsert(data);
-        return NoContent();
-    }
-
-    [HttpPost("bulk-async")]
-    public async Task<IActionResult> BulkAsync(IEnumerable<BigData> data)
-    {
-        await _repository.BulkInsertAsync(data);
-        return NoContent();
-    }
 }

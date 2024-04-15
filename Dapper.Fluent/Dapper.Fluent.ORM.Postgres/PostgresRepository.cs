@@ -1,7 +1,7 @@
 ﻿using Dapper.Fluent.ORM.Contracts;
+using Dapper.Fluent.ORM.Dommel;
 using Dapper.Fluent.ORM.Postgres.Contracts;
 using Dapper.Fluent.ORM.Repository;
-using Dommel;
 using System;
 
 namespace Dapper.Fluent.ORM.Postgres;

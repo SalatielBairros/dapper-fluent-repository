@@ -1,0 +1,71 @@
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Dapper;
+
+namespace Dapper.Fluent.ORM.Dommel;
+
+public static partial class DommelMapper
+{
+    /// <summary>
+    /// Inserts the specified entity into the database and returns the ID.
+    /// </summary>
+    /// <typeparam name="TEntity">The type of the entity.</typeparam>
+    /// <param name="connection">The connection to the database. This can either be open or closed.</param>
+    /// <param name="entity">The entity to be inserted.</param>
+    /// <param name="transaction">Optional transaction for the command.</param>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
+    /// <returns>The ID of the inserted entity.</returns>
+    public static object Insert<TEntity>(this IDbConnection connection, TEntity entity, ITableNameResolver tableNameResolver, IDbTransaction? transaction = null)
+        where TEntity : class
+    {
+        var sql = BuildInsertQuery(GetSqlBuilder(connection), typeof(TEntity), tableNameResolver);
+        LogQuery<TEntity>(sql);
+        return connection.ExecuteScalar(sql, entity, transaction)!;
+    }
+
+    /// <summary>
+    /// Inserts the specified entity into the database and returns the ID.
+    /// </summary>
+    /// <typeparam name="TEntity">The type of the entity.</typeparam>
+    /// <param name="connection">The connection to the database. This can either be open or closed.</param>
+    /// <param name="entity">The entity to be inserted.</param>
+    /// <param name="transaction">Optional transaction for the command.</param>
+    /// <param name="tableNameResolver">Table name resolver injection.</param>
+    /// <param name="cancellationToken">Optional cancellation token for the command.</param>
+    /// <returns>The ID of the inserted entity.</returns>
+    public static Task<object> InsertAsync<TEntity>(this IDbConnection connection, TEntity entity, ITableNameResolver tableNameResolver, IDbTransaction? transaction = null, CancellationToken cancellationToken = default)
+        where TEntity : class
+    {
+        var sql = BuildInsertQuery(GetSqlBuilder(connection), typeof(TEntity), tableNameResolver);
+        LogQuery<TEntity>(sql);
+        return connection.ExecuteScalarAsync(new CommandDefinition(sql, entity, transaction: transaction, cancellationToken: cancellationToken))!;
+    }    
+
+    public static string BuildInsertQuery(ISqlBuilder sqlBuilder, Type type, ITableNameResolver tableNameResolver, bool returnKeys = false)
+    {
+        var tableName = Resolvers.Table(type, sqlBuilder, tableNameResolver);
+        var cacheKey = new QueryCacheKey(QueryCacheType.Insert, sqlBuilder, type, tableName);
+        if (!QueryCache.TryGetValue(cacheKey, out var sql))
+        {
+            // Use all non-key and non-generated properties for inserts
+            var keyProperties = Resolvers.KeyProperties(type);
+            var typeProperties = Resolvers.Properties(type)
+                .Where(x => !x.IsGenerated)
+                .Select(x => x.Property)
+                .Except(keyProperties.Where(p => p.IsGenerated).Select(p => p.Property));
+
+            var columnNames = typeProperties.Select(p => Resolvers.Column(p, sqlBuilder, false)).ToArray();
+            var paramNames = typeProperties.Select(p => sqlBuilder.PrefixParameter(p.Name)).ToArray();
+
+            sql = sqlBuilder.BuildInsert(type, tableName, columnNames, paramNames, returnKeys);
+
+            QueryCache.TryAdd(cacheKey, sql);
+        }
+
+        return sql;
+    }
+}

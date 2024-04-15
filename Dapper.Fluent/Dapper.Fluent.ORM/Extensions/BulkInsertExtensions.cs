@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 using System.Linq;
-using Dommel;
+using Dapper.Fluent.ORM.Dommel;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;

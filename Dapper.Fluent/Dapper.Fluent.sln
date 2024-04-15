@@ -21,10 +21,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Implementation", "Implement
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dapper.Fluent.ORM.Tests", "Dapper.Fluent.ORM.Tests\Dapper.Fluent.ORM.Tests.csproj", "{81AFEF2F-4028-4B5B-85CE-BF9E3F8D7168}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dommel", "Dommel", "{192FB8D9-767C-479F-9372-B094F70AE5A7}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dommel", "Dommel\Dommel.csproj", "{BC529238-D581-4621-A38E-AF6A9CEFF5BD}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,10 +55,6 @@ Global
 		{81AFEF2F-4028-4B5B-85CE-BF9E3F8D7168}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{81AFEF2F-4028-4B5B-85CE-BF9E3F8D7168}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{81AFEF2F-4028-4B5B-85CE-BF9E3F8D7168}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BC529238-D581-4621-A38E-AF6A9CEFF5BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BC529238-D581-4621-A38E-AF6A9CEFF5BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BC529238-D581-4621-A38E-AF6A9CEFF5BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BC529238-D581-4621-A38E-AF6A9CEFF5BD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -75,7 +67,6 @@ Global
 		{83FDE3D8-C5B5-4E1D-A271-13EEEB766662} = {E1C865B3-BA43-4385-A2A5-216D0714CA3D}
 		{F534FDD0-958F-4690-A130-633E1BE84EAE} = {E1C865B3-BA43-4385-A2A5-216D0714CA3D}
 		{81AFEF2F-4028-4B5B-85CE-BF9E3F8D7168} = {E1C865B3-BA43-4385-A2A5-216D0714CA3D}
-		{BC529238-D581-4621-A38E-AF6A9CEFF5BD} = {192FB8D9-767C-479F-9372-B094F70AE5A7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {555D8BA0-6DBF-4649-9838-DBB4827B798F}

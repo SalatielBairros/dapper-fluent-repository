@@ -15,23 +15,13 @@ public class BigDataRepository : IBigDataRepository
         _repository = repository;
     }
 
-    public void BulkInsert(IEnumerable<BigData> data)
+    public void InsertList(IEnumerable<BigData> data)
     {
         _repository.BulkAdd(data);
     }
 
-    public async Task BulkInsertAsync(IEnumerable<BigData> data)
-    {
-        await _repository.BulkAddAsync(data);
-    }
-
-    public void InsertList(IEnumerable<BigData> data)
-    {
-        _repository.AddList(data);
-    }
-
     public async Task InsertListAsync(IEnumerable<BigData> data)
     {
-        await _repository.AddListAsync(data);
+        await _repository.BulkAddAsync(data);
     }
 }

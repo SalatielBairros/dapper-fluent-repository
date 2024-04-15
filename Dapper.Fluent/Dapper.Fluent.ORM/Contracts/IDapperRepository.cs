@@ -1,4 +1,4 @@
-﻿using Dommel;
+﻿using Dapper.Fluent.ORM.Dommel;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -37,11 +37,7 @@ namespace Dapper.Fluent.ORM.Contracts
         int ExecuteQuery(string query, object parameters = null);
         Task<IEnumerable<TEntity>> GetPagedDataAsync(int pageNumber, int pageSize, Expression<Func<TEntity, bool>> filter, string orderBy = null);
         IEnumerable<TEntity> AllPaged(int pageNumber, int pageSize);
-        Task<IEnumerable<TEntity>> AllPagedAsync(int pageNumber, int pageSize);
-        void AddTransaction(IEnumerable<TEntity> entities);
-        TReturn AddTransaction<TReturn>(TEntity entity);
-        Task AddTransactionAsync(IEnumerable<TEntity> entities);
-        Task<TReturn> AddTransactionAsync<TReturn>(TEntity entity);
+        Task<IEnumerable<TEntity>> AllPagedAsync(int pageNumber, int pageSize);        
         bool UpdateTransaction(TEntity entity);
         Task<bool> UpdateTransactionAsync(TEntity entity);
         void RemoveTransaction(Expression<Func<TEntity, bool>> filter);

@@ -4,8 +4,7 @@ using Dapper.Fluent.ORM.Migrations;
 using Dapper.Fluent.ORM.Contracts;
 using System.Reflection;
 using System.Linq;
-using Dommel;
-using Dapper.Fluent.Mapping.Resolvers;
+using Dapper.Fluent.ORM.Dommel;
 using Dapper.FluentMap;
 
 namespace Dapper.Fluent.ORM.Extensions;
@@ -28,23 +27,10 @@ public static class StartupExtensions
 
     public static IServiceCollection AddMapperConfiguration<T>(this IServiceCollection services) where T : class, IMapperConfiguration
     {
-        return services.AddFluentMapperConfiguration()
+        return services
+                .AddTransient<ITableNameResolver, DefaultTableNameResolver>()
                 .AddTransient<IMapperConfiguration, T>()
                 .AddTransient<ISchema, GlobalSchemaProxy>();
-    }
-
-    public static IServiceCollection AddFluentMapperConfiguration(this IServiceCollection services)
-    {
-        services.AddTransient<ITableNameResolver, TableNameResolver>();
-
-        FluentMapper.Initialize(config =>
-        {
-            DommelMapper.SetColumnNameResolver(new ColumnNameResolver());
-            DommelMapper.SetKeyPropertyResolver(new KeyPropertyResolver());
-            DommelMapper.SetPropertyResolver(new PropertyResolver());
-        });
-
-        return services;
     }
 
     public static IServiceCollection AddDapperORM(this IServiceCollection services)

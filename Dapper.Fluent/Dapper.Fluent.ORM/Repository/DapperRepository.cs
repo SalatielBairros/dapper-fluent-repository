@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Dapper.Fluent.Mapping.Resolvers;
 using Dapper.Fluent.ORM.Contracts;
 using Dapper.Fluent.ORM.Extensions;
-using Dommel;
+using Dapper.Fluent.ORM.Dommel;
 
 namespace Dapper.Fluent.ORM.Repository;
 
@@ -72,7 +71,7 @@ public abstract class DapperRepository<TEntity> : IDapperRepository<TEntity> whe
     {
         var propertyName = ((UnaryExpression)column.Body).Operand.ToString().Split(".").Last();
         var property = typeof(TEntity).GetProperty(propertyName);
-        var columnName = new ColumnNameResolver().ResolveColumnName(property);
+        var columnName = new DefaultColumnNameResolver().ResolveColumnName(property);
         var tableName = TableNameResolver.ResolveTableName(typeof(TEntity));
 
         return Connection.UseAsync(db =>
@@ -178,34 +177,6 @@ public abstract class DapperRepository<TEntity> : IDapperRepository<TEntity> whe
         => Connection.UseAsync(db => db.ExecuteAsync(query, parameters));
 
     public int ExecuteQuery(string query, object parameters = null) => Connection.Use(db => db.Execute(query, parameters));
-
-    #endregion
-
-    #region Add Using Transaction
-
-    public void AddTransaction(IEnumerable<TEntity> entities)
-    {
-        entities.ToList().ForEach(EntityValidation.ThrowIfErrorOn);
-        Connection.UseTransaction(db => db.InsertAll(entities, TableNameResolver));
-    }
-
-    public TReturn AddTransaction<TReturn>(TEntity entity)
-    {
-        EntityValidation.ThrowIfErrorOn(entity);
-        return Connection.UseTransaction(db => (TReturn)db.Insert(entity, TableNameResolver));
-    }
-
-    public async Task AddTransactionAsync(IEnumerable<TEntity> entities)
-    {
-        entities.ToList().ForEach(EntityValidation.ThrowIfErrorOn);
-        await Connection.UseTransactionAsync(async db => await db.InsertAllAsync(entities, TableNameResolver));
-    }
-
-    public async Task<TReturn> AddTransactionAsync<TReturn>(TEntity entity)
-    {
-        EntityValidation.ThrowIfErrorOn(entity);
-        return await Connection.UseTransactionAsync(async db => (TReturn)await db.InsertAsync(entity, TableNameResolver));
-    }
 
     #endregion
 
