@@ -1,4 +1,4 @@
-name: Publish
+name: Publish Multiverse ORM
 on:
   workflow_dispatch: 
   push:

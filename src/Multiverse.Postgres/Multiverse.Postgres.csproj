@@ -4,7 +4,28 @@
 		<TargetFramework>net6.0</TargetFramework>
 		<RepositoryUrl>https://github.com/SalatielBairros/multiverse-orm</RepositoryUrl>
 		<Version>0.1.0</Version>
+		<AssemblyName>Multiverse.ORM.Postgres</AssemblyName>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<Title>Multiverse ORM - Postgres</Title>
+		<Authors>Salatiel Bairros</Authors>
+		<Description>The Postgres Module for Multiverse ORM, an ORM library for .NET designed specifically for managing multitenancy within your database schemas using Dapper, Dommel and Migrations.</Description>
+		<PackageProjectUrl>https://github.com/SalatielBairros/multiverse-orm</PackageProjectUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageTags>orm;multischema;multitenancy;dapper</PackageTags>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<EnablePackageValidation>true</EnablePackageValidation>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Include="..\..\LICENSE">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	  <None Include="..\..\README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="FluentMigrator" Version="5.2.0" />

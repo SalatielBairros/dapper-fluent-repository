@@ -14,10 +14,18 @@
 		<PackageTags>orm;multischema;multitenancy;dapper</PackageTags>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<EnablePackageValidation>true</EnablePackageValidation>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<IncludeSymbols>True</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<PackageIcon>multiverse.png</PackageIcon>
 	</PropertyGroup>
 
 	<ItemGroup>
 	  <None Include="..\..\LICENSE">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	  <None Include="..\..\multiverse.png">
 	    <Pack>True</Pack>
 	    <PackagePath>\</PackagePath>
 	  </None>
