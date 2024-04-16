@@ -1,203 +1,226 @@
-# Dapper Fluent ORM
+# Multiverse ORM
 
-## Introdução
+Welcome to Multiverse, an Object-Relational Mapping (ORM) library for .NET designed specifically for managing multitenancy within your database schemas using Dapper.
 
-Pacote que permite o uso do Dapper como um ORM contendo as seguintes funcionalidades:
+## Overview
 
-* **Migrations**: Controle via tabela e permitindo ser extendido.
-* **Pesquisas com _lambda_**
-* **Geração automática das queries**: Utilizando o fluent já é compatível com vários bancos, como `Postgres`, `SQL Server`, `MySQL` e `SQLite`
-* **Gestão das conexões**: todas as conexões são abertas e fechadas para cada execução no repositório.
-* **Validação automática das entidades**: Permite que uma entidade seja validada automaticamente antes de ser enviada ao banco de acordo com as configurações do mapeamento.
+Multiverse offers a comprehensive solution for developers working with applications that require multitenancy support. 
+Whether you're building a Software as a Service (SaaS) platform or a multi-user application, Multiverse simplifies the complexities of managing multiple tenants within a single database.
+
+## Key features
+
+* **Schema Management**: Seamlessly handle multiple schemas within a single database instance. You also can customize how the schema is injected.
+* **Dapper Integration**: Leveraging the simplicity and performance of Dapper for database operations. 
+* **SQL Generation**: We use a custom implementation of the [Dommel](https://github.com/henkmollema/Dommel) library added inside our source code to generate SQL isolating the schemas.
+* **Migration**: Streamline database schema migrations across multiple tenants using [FluentMigrator](https://fluentmigrator.github.io/)
+* **JSON Handling**: Work with JSON data types in tables, like `jsonb` in PostgreSQL. You can create a complex object on your domain entity and map it as a json field.
+* **Flexible Configuration**: Configure Multiverse to suit your specific multitenancy requirements or overrite any injection of our implementation to customize yours.
+* **Connection Handling**: Handle the database connection, with or without transactions.
+* **Automatic Entity Validation**: Allows an entity to be validated (nullable fields or field lenght) before being sent to database, according with what was configurated on mapping.
 
 ## Dependências
 
-Para tal são usadas os seguintes pacotes:
+This library aggregates and customize the following libraries to allow multitenancy with dapper:
 
 * [Dapper](https://www.nuget.org/packages/Dapper)
 * [FluentMigrator](https://www.nuget.org/packages/FluentMigrator/)
 * [FluentMigrator.Runner](https://www.nuget.org/packages/FluentMigrator.Runner)
 * [Dapper.FluentMap](https://www.nuget.org/packages/Dapper.FluentMap)
-* [Dapper.FluentMap.Dommel](https://www.nuget.org/packages/Dapper.FluentMap.Dommel)
 
-Além disso, para a conexão com **Postgres** - única implementada até então - são utilizadas as seguintes dependências:
+We currently only support PostgreSQL, but new databases can be implemented. For PostgreSQL, the following dependencies are used:
 
 * [Npgsql](https://www.nuget.org/packages/Npgsql)
 * [FluentMigrator.Runner.Postgres](https://www.nuget.org/packages/FluentMigrator.Runner.Postgres)
 
-OBS: _Nenhuma dessas referências precisa ser importada para o projeto que consome esse pacote, apenas o pacote em si._
+### About Dommel
 
-## Utilizando o pacote
+We imported part of the code from [Dommel](https://github.com/henkmollema/Dommel) because it required some changes in Cache and SQL generation for allow multischema. 
 
-### Injetando as dependências
+## Getting Started
+
+### Injecting the library
 
 ```csharp
 public void ConfigureServices(IServiceCollection services)
 {
-    // Inclui o migration para postgres. Para outros bancos o nome seria equivalente.
-    services.AddPostgresRepositoryWithMigration(Configuration["ConnectionString"]);
-    // Adiciona a configuração do mapeamento das entidades
-    services.AddMapperConfiguration<MapperConfiguration>();
-    // Adiciona o IDapperORMRunner
-    services.AddDapperORM();
-
+    services
+        // Add postgres migration and referencing the assembly with the migrations (optional)
+        .AddPostgresRepositoryWithMigration(Configuration["ConnectionString"], assembliesWithMappers: typeof(Reference).Assembly)
+        // Add the entity map configuration
+        .AddMapperConfiguration<MapperConfiguration>()
+        // Add the ORM and Migration runner
+        .AddDapperORM()
+        // Add the multischema option. It is the implementation of ISchema.
+        .AddHttpMultiSchema();
     ...
 }
 
 public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IDapperORMRunner dapper)
 {
-    // Cria os mapeamentos e, baseado neles, o migration
-    dapper.AddMapsAndRunMigrations();
+    // Add the migration mappers
+    dapper.AddMappers();
     ...
 }
 ```
 
-### Criando os mapeamentos
+### Mapping your entities
 
-Para implementar um mapeamento, basta fazer de forma semelhante ao exemplo abaixo:
+To configure your entities as tables, just follow the example below: 
 
 ```csharp
 
-    // É necessário herdar de DapperFluentEntity para definir o maepamento
-    public class PublicSchemaEntityMap : DapperFluentEntityMap<PublicSchemaEntity>
+    // The map must has this inheritance. Only mapped properties are transformed in columns. The others are ignored.
+    public class MyEntityMap: DapperFluentEntityMap<MyEntity>
     {
-        // Apenas as propriedades mapeadas serão transformadas em colunas. As outras serão ignoradas.
-        public PublicSchemaEntityMap(string schema)
-            : base(schema)
+        
+        public MyEntityMap()
+            : base()
         {
-            // Nome da tabela e seu respectivo schema
-            ToTable("sampleentity", schema);
+            // Table name and its schema (optional). You can inform an specific schema or use the tenant one.
+            ToTable("myentity");
 
-            // Informa que a entidade deverá ser validada em cada Insert ou Update dentro do repositório de acordo com as informações do banco antes de enviar para o database.
+            // Inform that you want to validate your entity before send it to the database
             WithEntityValidation();   
 
-            // Identifica uma coluna como chave e identity         
+            // Add a primary key column with identity option.
             MapToColumn(x => x.Id).IsKey().IsIdentity();
 
-            // Atribui valor default e que não pode ser nulo.
+            // Add default value
             MapToColumn(x => x.IntProperty).Default(5).NotNull();
 
-            // Define tamanho máximo para a coluna (aplicável apenas a strings)
+            // Limit the size of a string property
             MapToColumn(x => x.LimitedTextProperty).WithLenght(255);
             MapToColumn(x => x.TextProperty).NotNull();
 
-            // Utiliza nome da coluna diferente da propriedade
+            // The column name can be different from the property
             Map(x => x.DateProperty).ToColumn("datepp");
             Map(x => x.DecimalProperty).ToColumn("decimalpp");
             MapToColumn(x => x.BooleanProperty);
+            
+            // Save a complex object (list or class) as a json field.
+            MapToColumn(x => x.Data).AsJson();
 
-            // Cria chave estrangeira com outra tabela.
+            // Defines current date as default value and ignore the column in select queries.
+            MapToColumn(x => x.CreationDate).Ignore().Default(SystemMethods.CurrentDateTime).NotNull();
+
+            // Create a foreign key
             MapToColumn(x => x.CategoryId).ForeignKeyFor<Category>("id");
         }
     }
 
 ```
 
-##### Observações
-
-* O método `MapToColumn` cria a coluna com o mesmo nome da propriedade, mas em minúsculo e sem ser _case sensitive_.
-* Para que o `ForeignKeyFor` funcione corretamente é necessário adicionar os mappers na ordem correta: primeiro o mapper referenciado e depois a tabela que o referencia.
-
-
-### Declarando os mapeamentos
-
-Após criar os mapeamentos é necessário implementar a interface `IMapperConfiguration` e configurar os mapeamentos. Essa implementação deve ser conforme abaixo:
+After creating all your mappings, it's necessary to implement `IMapperConfiguration` and configurate all maps that are going to be used:
 
 ```csharp
     public class MapperConfiguration : IMapperConfiguration
     {
+        private readonly IPostgresSettings _settings;
+
+        public MapperConfiguration(IPostgresSettings settings)
+        {
+            _settings = settings;
+        }
+
         public void ConfigureMappers()
         {
-            var defaultSchema = "schema";
-            // Note que o mapeamento para Category vem antes do PublicSchemaEntity
-            FluentMapping.AddMap(new CategoryMap(defaultSchema));
-            FluentMapping.AddMap(new PublicSchemaEntityMap(defaultSchema));
-            FluentMapping.AddMap(new LogEntityMap(defaultSchema));
+            // We can use the default schema at the map
+            FluentMapping.AddMap(new CategoryMap(_settings.DefaultSchema));                        
+            FluentMapping.AddMap(new MyEntity());
         }
     }
 ```
 
-Após criar a configuração, basta injetar:
+The created class is used on the injection:
 
 ```csharp
 services.AddMapperConfiguration<MapperConfiguration>();
 ```
 
-**As tabela serão criadas automaticamente a partir dos mapeamentos caso não existam na base, seguindo as regras do Migration.**
+**All the tables are going to be automaticaly created for each schema when the repository was first created using it.**
 
-## Consumindo o repositório
+## Using the repository
 
-```csharp
-    public class PublicSchemaEntityRepository : IPublicSchemaEntityRepository
+```csharp    
+    public class MyEntityRepository
     {
-        private readonly IPostgresRepository<PublicSchemaEntity> _repository;
-
-        // A injeção de IPostgresRepository<TEntity> já foi configurada no startup para qualquer valor de TEntity
-        public PublicSchemaEntityRepository(IPostgresRepository<PublicSchemaEntity> repository)
+        // Injecting the postgres repository
+        private readonly IPostgresRepository<MyEntity> _repository;
+        
+        public PublicSchemaEntityRepository(IPostgresRepository<MyEntity> repository)
         {
             this._repository = repository;
         }
-
-        // Utiliza lambda com linq para realizar as queries.
+        
         public void Delete(int id) => _repository.Remove(x => x.Id == id);
-        public PublicSchemaEntity Get(int id) => _repository.Find(x => x.Id == id);
-        public IEnumerable<PublicSchemaEntity> GetAll() => _repository.All();
-        public int Insert(PublicSchemaEntity entity) => _repository.Add(entity);
-        public bool Update(PublicSchemaEntity entity) => _repository.Update(entity);
-
-        // Exemplo de realização de join entre duas tabelas
-        public PublicSchemaEntity GetWithCategory(int id)
+        public MyEntity Get(int id) => _repository.Find(x => x.Id == id);
+        public IEnumerable<MyEntity> GetAll() => _repository.All();
+        public int Insert(MyEntity entity) => _repository.Add(entity);
+        public bool Update(MyEntity entity) => _repository.Update(entity);
+        
+        public MyEntity GetWithCategory(int id)
             => _repository.JoinWith<Category>(id, (entity, category) =>
             {
                 entity.Category = category;
                 return entity;
             });
+        
+        public IEnumerable<ViewModelClass> GetWithSQL(int categoryId)
+            => _repository.GetData<ViewModelClass>("SELECT * FROM SAMPLEENTITY WHERE CATEGORYID = :CATEGORYID",
+            new
+            {
+                CategoryId = categoryId
+            });
     }
 ```
 
-##### Observações
-* O método `JoinWith` atualmente retorna apenas um objeto por id. Isso se dá devido a limitação do [FluentMigrator](https://www.nuget.org/packages/FluentMigrator/). Com isso, só funciona em FKs simples e não retorna uma lista com eles. **No código do pacote do migrator já existe a função para tal, mas ela não está exposta. Um próximo passo seria uma contribuição no pacote**.
+* The method `JoinWith` currently only returns one object per id because of the limitations of [FluentMigrator](https://www.nuget.org/packages/FluentMigrator/). It's necessary to change the library to use it in a different way.
 
-### Utilizando queries diretamente para o repositório
+## Using migrations
 
-É possível, caso necessário, utilizar diretamente queries SQL para buscar os dados, sem utilizar os mapeamentos e com objetos customizados, conforme exemplio abaixo:
-
-```csharp
-
-    public IEnumerable<ViewModelClass> GetWithSQL(int categoryId)
-        => _repository.GetData<ViewModelClass>("SELECT * FROM SAMPLEENTITY WHERE CATEGORYID = :CATEGORYID",
-        new
-        {
-            CategoryId = categoryId
-        });
-
-```
-
-## Extendendo o Migrations
-
-Para extender o Migrations, criando os próprios sem perder os recursos deste pacote, basta fazer o seguinte: 
+To create a new migration, like add a column in a table:
 
 ```csharp
     [Migration(123456)]
     public class NewMigration : OnlyUpMigration
     {
+        private readonly ISchema _schema;    
+
+        public NewMigration(ISchema schema)
+        {
+            this._schema = schema;
+        }
+
         public override void Up()
         {
-            ...
+            var map = new MyEntityMap();
+            var tablename = map.TableName;
+            var schemaName = _schema.GetSchema();
+            const string columnName = "details";
+
+            if (!Schema.Schema(schemaName).Table(tablename).Column(columnName).Exists())
+                this.Alter.Table(tablename)
+                    .AddColumn(columnName)
+                    .AsString()
+                    .Nullable();
         }
     }
 ```
 
-Todos os migrations criados são controlados pela tabela `VersionInfo` no schema default.
+All migrations are controlled by the table `migrations` in each schema. However, if you do not use the multischema option, the table `VersionInfo` will be created at the default schema.
 
-<mark>Os números <strong>1</strong> e <strong>2</strong> são utilizados para o pacote para serem executados antes dos outros. Portanto todos os Migrations criados devem conter valores maiores que esses.</mark>
+<mark>The numbers <strong>1</strong> and <strong>2</strong> are already used for the library, so all migration codes have to be bigger then 2.</mark>
 
-## Melhorias futuras:
+## Contributing
+We welcome contributions from the community! Whether it's bug fixes, feature enhancements, or documentation improvements, please feel free to open a pull request. 
+We have a few things you can already start contributing:
 
-* Atualizar versão do Dapper (o pacote do Fluent está com versão desatualizada e conflitando com a mais recente).
-* Join retornando lista
-* Join com Lambda
-* Testes unitários
-* Pacote nuget
-* Permitir GroupBy
+* Join returning lists
+* Join with lambda (similar to EF)
+* Unit tests
+* Nuget Package
+* Allow group by
+* Change Dommel implementation from static to a more threadsafe implementation.
+* Creating a GitHub documentation page
+* Implementing other databases
 
