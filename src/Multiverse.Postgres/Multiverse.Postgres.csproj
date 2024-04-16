@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
 		<RepositoryUrl>https://github.com/SalatielBairros/multiverse-orm</RepositoryUrl>
-		<Version>0.1.0</Version>
+		<Version>0.1.3</Version>
 		<AssemblyName>Multiverse.ORM.Postgres</AssemblyName>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<Title>Multiverse ORM - Postgres</Title>
