@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Multiverse.Postgres\Multiverse.Postgres.csproj" />
+    <ProjectReference Include="..\Example.Multiverse.Application\Example.Multiverse.Application.csproj" />    
+  </ItemGroup>
+
+</Project>
