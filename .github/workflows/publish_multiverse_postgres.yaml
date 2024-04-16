@@ -30,11 +30,11 @@ jobs:
       uses: actions/setup-dotnet@v4
 
     - name: Build
-      run: dotnet build src/Multiverse/Multiverse.Postgres.csproj --configuration Release 
+      run: dotnet build src/Multiverse.Postgres/Multiverse.Postgres.csproj --configuration Release 
       
     # Create the NuGet package in the folder from the environment variable NuGetDirectory
     - name: Pack
-      run: dotnet pack src/Multiverse/Multiverse.Postgres.csproj --configuration Release -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg --output ${{ env.NuGetDirectory }}
+      run: dotnet pack src/Multiverse.Postgres/Multiverse.Postgres.csproj --configuration Release -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg --output ${{ env.NuGetDirectory }}
 
     # Publish the NuGet package as an artifact, so they can be used in the following jobs
     - name: Upload Package
