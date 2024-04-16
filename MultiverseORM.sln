@@ -24,10 +24,12 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "files", "files", "{77E867E1-BD56-4A3A-98E2-FFA7C08AF49E}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
+		.github\workflows\publish_multiverse.yaml = .github\workflows\publish_multiverse.yaml
+		.github\workflows\publish_multiverse_postgres.yaml = .github\workflows\publish_multiverse_postgres.yaml
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Multiverse.Postgres.Tests", "tests\Multiverse.Postgres.Tests\Multiverse.Postgres.Tests.csproj", "{99BCE172-C00B-4FB8-A43B-BAEC24B4D6A9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Multiverse.Postgres.Tests", "tests\Multiverse.Postgres.Tests\Multiverse.Postgres.Tests.csproj", "{99BCE172-C00B-4FB8-A43B-BAEC24B4D6A9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
