@@ -2,6 +2,8 @@
 
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
+		<RepositoryUrl>https://github.com/SalatielBairros/multiverse-orm</RepositoryUrl>
+		<Version>0.1.0</Version>
 	</PropertyGroup>
 
 	<ItemGroup>
