@@ -9,4 +9,5 @@ public class BigData
     public int NumberValue { get; set; }
     public DateTime CreationDate { get; set; }
     public string Details { get; set; }
+    public string Schema { get; set; }
 }

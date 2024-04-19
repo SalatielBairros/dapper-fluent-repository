@@ -9,12 +9,18 @@ namespace Multiverse.Postgres.Extensions;
 
 public static class StartupExtensions
 {
-    public static IServiceCollection AddPostgresRepositoryWithMigration(this IServiceCollection services, string connectionString, string defaultSchema = "public", params Assembly[] assembliesWithMappers)
+    public static IServiceCollection AddPostgresRepositoryWithMigration(
+        this IServiceCollection services,
+        string connectionString,
+        string defaultSchema = "public",
+        bool automaticMigrations = true,
+        params Assembly[] assembliesWithMappers)
     {
         services.AddScoped(typeof(IRepositorySettings), service => new PostgresRepositorySettings
         {
             ConnString = connectionString,
-            DefaultSchema = defaultSchema ?? "public"            
+            DefaultSchema = defaultSchema ?? "public",
+            AutomaticMigrationsEnabled = automaticMigrations,
         });
 
         services

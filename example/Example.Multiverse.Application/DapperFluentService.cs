@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Dapper.Fluent.Domain;
 using Dapper.Fluent.Application;
+using System.Linq;
 
 namespace Dapper.Fluent.Application;
 
@@ -51,5 +52,26 @@ public class DapperFluentService : IDapperFluentService
         _entityRepository.Update(entity);
         _logRepository.Insert(new LogEntity(entity));
         return Get(entity.Id);
+    }
+}
+
+public class MultiSchemaInsertService
+{
+    private readonly IServiceProvider _serviceProvider;
+
+    public MultiSchemaInsertService(IServiceProvider serviceProvider)
+    {
+        this._serviceProvider = serviceProvider;
+    }
+
+    public void Insert(List<UsePeak> items)
+    {
+        var itemsPerTenant = items.GroupBy(x => x.TenantId).ToList();
+
+        //foreach (var item in itemsPerTenant)
+        //{
+        //    var tenantId = new Guid(item.Key);
+        //    using var scope = _serviceProvider.CreateScope();
+        //}
     }
 }

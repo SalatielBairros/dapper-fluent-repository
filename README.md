@@ -217,8 +217,8 @@ We have a few things you can already start contributing:
 
 * Join returning lists
 * Join with lambda (similar to EF)
+* `PostgresJsonPropertyHandler` uses `NpgsqlConnection.GlobalTypeMapper` that is obsolete.
 * Unit tests
-* Nuget Package
 * Allow group by
 * Change Dommel implementation from static to a more threadsafe implementation.
 * Creating a GitHub documentation page

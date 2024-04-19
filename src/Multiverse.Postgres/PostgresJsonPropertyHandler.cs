@@ -8,11 +8,16 @@ namespace Multiverse.Postgres;
 
 public class PostgresJsonPropertyHandler : IJsonPropertyHandler
 {
+    private static readonly object lockObject = new();
+
     public void SetJsonTypes(Type[] types)
     {
-        NpgsqlConnection.GlobalTypeMapper.UseJsonNet(null, types);
+        lock (lockObject)
+        {
+            NpgsqlConnection.GlobalTypeMapper.UseJsonNet(null, types);
 
-        foreach (var type in types)
-            SqlMapper.AddTypeHandler(type, new DefaultJsonTypeHandler());
+            foreach (var type in types)
+                SqlMapper.AddTypeHandler(type, new DefaultJsonTypeHandler());
+        }
     }
 }

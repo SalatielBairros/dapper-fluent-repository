@@ -21,4 +21,3 @@ public class HttpSchemaProxy : ISchema
         return headers["schema"].ToString() ?? _settings.DefaultSchema;
     }
 }
-

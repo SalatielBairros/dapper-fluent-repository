@@ -19,8 +19,11 @@ public abstract class DapperRepository<TEntity> : IDapperRepository<TEntity> whe
     {
         TableNameResolver = tableNameResolver;
         ConfigureDatabase();
-        runner.CreateTablesFromMigrations();
         Connection = connection;
+
+        if (connection.Settings.AutomaticMigrationsEnabled)
+            runner.CreateTablesFromMigrations();
+
     }
 
     public virtual void ConfigureDatabase() { }
@@ -105,7 +108,7 @@ public abstract class DapperRepository<TEntity> : IDapperRepository<TEntity> whe
         EntityValidation.ThrowIfErrorOn(entity);
         Connection.Use(db => db.Insert(entity, TableNameResolver));
     }
-    
+
     public async Task AddAsync(TEntity entity) => await Task.Run(() => Add(entity));
 
     public void BulkAdd(IEnumerable<TEntity> entities, int batchSize = 1000)

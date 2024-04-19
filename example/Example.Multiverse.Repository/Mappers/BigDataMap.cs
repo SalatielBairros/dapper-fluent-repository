@@ -16,6 +16,6 @@ public class BigDataMap : DapperFluentEntityMap<BigData>
         MapToColumn(x => x.Description).NotNull();
         MapToColumn(x => x.NumberValue).NotNull().Default(0);
         MapToColumn(x => x.CreationDate).Ignore().Default(SystemMethods.CurrentDateTime).NotNull();
-        MapToColumn(x => x.Details);
+        MapToColumn(x => x.Details);        
     }
 }
